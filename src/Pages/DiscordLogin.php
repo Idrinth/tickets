@@ -2,6 +2,9 @@
 
 namespace De\Idrinth\Tickets\Pages;
 
+use PDO;
+use Wohali\OAuth2\Client\Provider\Discord;
+
 class DiscordLogin
 {
     private $database;
