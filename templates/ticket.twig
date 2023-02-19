@@ -6,9 +6,9 @@
 <ul>
 {% for comment in comments %}
     <li>
-        <strong>comment.creator</strong>
-        <span>comment.created</span>
-        <p>comment.content</p>
+        <strong>{{ comment.creator }}</strong>
+        <span>{{ comment.created }}</span>
+        <p>{{ comment.content }}</p>
     </li>
 {% endfor %}
 </ul>
