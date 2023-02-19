@@ -33,7 +33,7 @@ class NewTicket
             $this->database
                 ->prepare('UPDATE tickets SET slug=:slug WHERE aid=:id')
                 ->execute([':slug' => $slug, ':id' => $id]);
-            header('Location: /'.$post['project'].'/'.$slug, true, 303);
+            //header('Location: /'.$post['project'].'/'.$slug, true, 303);
             return;
         }
         return $this->twig->render('new');
