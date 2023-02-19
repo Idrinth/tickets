@@ -1,0 +1,45 @@
+#nav > nav > ul {
+  display: flex;
+  padding: 0;
+  margin: 0;
+}
+#nav > nav > ul > li {
+  display: block;
+  list-style: none;
+  padding: 1em;
+  background: rgba(255,255,255,0.1);
+}
+#nav {
+  background: black;
+}
+#nav > nav > ul > li a {
+  color: #fff;
+}
+#header {
+  color: #fff;
+  background: black;
+  display: flex;
+}
+#footer {
+  color: #fff;
+  background: #000;
+}
+#footer > a {
+  color: #fff;
+}
+#content {
+  background: #eee;
+}
+h1,h2,h3,h4,h5 {
+  padding: 0;
+  margin: 0;
+}
+.ticket {
+  background: #ddd;
+  padding: 0.1em;
+  border-radius: 0.2em;
+  margin: 0.3em;
+}
+.board {
+  display: flex;
+}
