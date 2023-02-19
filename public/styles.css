@@ -45,10 +45,18 @@ h1,h2,h3,h4,h5 {
   margin: 0;
 }
 .ticket {
-  background: #ddd;
   padding: 0.1em;
   border-radius: 0.2em;
   margin: 0.3em;
+}
+.ticket.bug {
+  background: #fdd;
+}
+.ticket.support {
+  background: #dfd;
+}
+.ticket.feature {
+  background: #ddf;
 }
 .board {
   display: flex;

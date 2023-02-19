@@ -8,7 +8,7 @@
     <div class="column">
         <h3>New</h3>
         {% for ticket in newTickets %}
-        <div class="ticket">
+        <div class="ticket {{ ticket.type }}">
             <h4>{{ ticket.creator.display }}: <a href="/{{ project.slug }}/{{ ticket.slug }}">{{ ticket.title }}</a></h4>
             <p>{{ ticket.type }}: {{ ticket.status.name }}</p>
         </div>
@@ -17,7 +17,7 @@
     <div class="column">
         <h3>WIP</h3>
         {% for ticket in wipTickets %}
-        <div class="ticket">
+        <div class="ticket {{ ticket.type }}">
             <h4>{{ ticket.creator.display }}: <a href="/{{ project.slug }}/{{ ticket.slug }}">{{ ticket.title }}</a></h4>
             <p>{{ ticket.type }}: {{ ticket.status.name }}</p>
         </div>
@@ -26,7 +26,7 @@
     <div class="column">
         <h3>Done</h3>
         {% for ticket in doneTickets %}
-        <div class="ticket">
+        <div class="ticket {{ ticket.type }}">
             <h4>{{ ticket.creator.display }}: <a href="/{{ project.slug }}/{{ ticket.slug }}">{{ ticket.title }}</a></h4>
             <p>{{ ticket.type }}: {{ ticket.status.name }}</p>
         </div>
