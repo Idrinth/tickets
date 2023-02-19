@@ -1,12 +1,12 @@
 {% include 'header.twig' %}
 <h2>{{ ticket.title }}</h2>
-<p>Created: {{ ticket.created }} by</p>
+<p>Created: {{ ticket.created }} by {{ users[ticket.creator] }}</p>
 <p>Modified: {{ ticket.modified }}</p>
 <p>{{ ticket.description }}</p>
 <ul>
 {% for comment in comments %}
     <li>
-        <strong>{{ comment.creator }}</strong>
+        <strong>{{ users[comment.creator] }}</strong>
         <span>{{ comment.created }}</span>
         <p>{{ comment.content }}</p>
     </li>

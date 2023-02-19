@@ -34,6 +34,13 @@ class Ticket
         $stmt = $this->database->prepare('SELECT * FROM comments WHERE ticket=:id');
         $stmt->execute([':id' => $ticket['aid']]);
         $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return $this->twig->render('ticket', ['project' => $project, 'ticket' => $ticket, 'comments' => $comments]);
+        $stmt = $this->database->prepare('SELECT aid,display FROM users');
+        $stmt->execute([':id' => $ticket['aid']]);
+        $u = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $users = [];
+        foreach ($u as $us) {
+            $users[$us['aid']] = $us['display'];
+        }
+        return $this->twig->render('ticket', ['users' => $users, 'project' => $project, 'ticket' => $ticket, 'comments' => $comments]);
     }
 }
