@@ -37,8 +37,6 @@ class DiscordLogin
             'code' => $_GET['code']
         ]);
         $user = $provider->getResourceOwner($token);
-        $_SESSION['user'] = $user->getUsername();
-        $_SESSION['discriminator'] = $user->getDiscriminator();
         $stmt = $this->database->prepare('SELECT aid FROM users WHERE discord=:discordId');
         $stmt->execute([
             ':discordId' => $user->getId(),
