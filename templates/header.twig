@@ -9,4 +9,13 @@
             <strong>Idrinth's Ticketing System</strong>
             <img src="/logo.png" alt="Logo"/>
         </div>
+        <div id="nav">
+            <nav>
+                <ul>
+                {% for project in projects %}
+                    <li><a href="/{{ project.slug }}">{{ project.name }}</a></li>
+                {% endfor %}
+                </ul>
+            </nav>
+        </div>
         <div id="content">
