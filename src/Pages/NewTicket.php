@@ -25,8 +25,8 @@ class NewTicket
             $stmt = $this->database->prepare("SELECT aid FROM projects WHERE slug=:slug");
             $stmt->execute(['title' => $post['project']]);
             $project = $stmt->fetchColumn();
-            $stmt = $this->database->prepare("INSERT INTO tickets (title,description,creator,type,status,created,modified,project) VALUES (title,description,creator,type,1,NOW(),NOW(),project)");
-            $stmt->execute(['title' => $post['title'], 'description' => $post['description'],'creator' => $_SESSION['id'],'type' => $post['type'],'project' => $project]);
+            $stmt = $this->database->prepare("INSERT INTO tickets (`title`,`description`,`creator`,`type`,`status`,`created`,`modified`,`project`) VALUES (:title,:description,:creator,:type,1,NOW(),NOW(),:project)");
+            $stmt->execute([':title' => $post['title'], ':description' => $post['description'], ':creator' => $_SESSION['id'],':type' => $post['type'],':project' => $project]);
             $id = $this->database->lastInsertId();
             $slug = base_convert("$id", 10, 36);
             $this->database
