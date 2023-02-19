@@ -2,8 +2,10 @@
 
 namespace De\Idrinth\Tickets;
 
+use Parsedown;
 use PDO;
 use Twig\Environment;
+use Twig\TwigFilter;
 
 class Twig
 {
@@ -14,6 +16,11 @@ class Twig
     {
         $this->twig = $twig;
         $this->database = $database;
+        $pd = new Parsedown();
+        $pd->setSafeMode(true);
+        $this->twig->addFunction(new TwigFilter('markdown', function ($content) use ($pd) {
+            return $pd->text($content);
+        }));
     }
     public function render(string $template, array $context = []): string
     {
