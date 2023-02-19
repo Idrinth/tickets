@@ -27,9 +27,16 @@ class Ticket
         $stmt = $this->database->prepare('SELECT * FROM tickets WHERE slug=:slug');
         $stmt->execute([':slug' => $ticket]);
         $ticket = $stmt->fetch(PDO::FETCH_ASSOC);
-        if (!$project) {
+        if (!$ticket) {
             header('Location: /' . $category, true, 303);
             return;
+        }
+        if (isset($_SESSION['id'])) {
+            if (isset($post['content'])) {
+                $this->database
+                    ->prepare('INSERT INTO comments (`ticket`,`user`,`created`,`content`) VALUES (:ticket,:user,NOW(),:content)')
+                    ->execute([':ticket' => $ticket['aid'],':user' => $_SESSION['id'],':content' => $post['content']]);
+            }
         }
         $stmt = $this->database->prepare('SELECT * FROM comments WHERE ticket=:id');
         $stmt->execute([':id' => $ticket['aid']]);
