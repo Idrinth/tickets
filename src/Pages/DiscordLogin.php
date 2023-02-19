@@ -41,8 +41,8 @@ class DiscordLogin
         $_SESSION['discriminator'] = $user->getDiscriminator();
         $stmt = $this->database->prepare('SELECT aid FROM users WHERE discord=:discordId');
         $stmt->execute([
-                ':discordId' => $user->getId(),
-            ]);
+            ':discordId' => $user->getId(),
+        ]);
         $_SESSION['id'] = intval($stmt->fetchColumn(), 10);
         if ($_SESSION['id'] === 0) {
             $this->database
@@ -62,7 +62,7 @@ class DiscordLogin
             ->prepare("UPDATE users SET display=:display WHERE discord=:discordId")
             ->execute([
                 ':discordId' => $user->getId(),
-                ':name' => $user->getUsername() . '#' . $user->getDiscriminator(),
+                ':display' => $user->getUsername() . '#' . $user->getDiscriminator(),
             ]);
         if (isset($_SESSION['redirect'])) {
             header('Location: ' . $_SESSION['redirect'], true, 303);
