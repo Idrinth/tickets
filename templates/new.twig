@@ -13,10 +13,11 @@
         <option value="service">Service Request(everything else)</option>
     </select>
     <label for="project">Project</label>
-    <textarea id="project" name="project">
+    <select id="project" name="project">
         <option value="">unknown</option>
         {% for project in projects %}
             <option value="{{ project.slug }}">{{ project.name }}</option>
         {% endfor %}
-    </textarea>
+    </select>
+    <button type="submit">Create</button>
 </form>
