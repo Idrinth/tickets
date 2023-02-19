@@ -21,7 +21,6 @@ require dirname(__DIR__) . '/vendor/autoload.php';
     ->get('/', Home::class)
     ->get('/imprint', Imprint::class)
     ->get('/discord-login', DiscordLogin::class)
-    ->get('/github-login', GithubLogin::class)
     ->get('/login', Login::class)
     ->get('/post', Login::class)
     ->get('/new', NewTicket::class)
