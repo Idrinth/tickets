@@ -18,7 +18,7 @@ class Twig
     public function render(string $template, array $context = []): string
     {
         $context['projects'] = $this->database
-            ->query("SELECT * FROM projects")
+            ->query("SELECT * FROM projects WHERE aid > 0")
             ->fetchAll(PDO::FETCH_ASSOC);
         $context['user'] = [];
         if (isset($_SESSION['id'])) {
