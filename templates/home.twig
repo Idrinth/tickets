@@ -5,8 +5,8 @@
         <h3>New</h3>
         {% for ticket in newTickets %}
         <div class="ticket">
-            <h4>{{ ticket.creator.display }}: <a href="/{{ ticket.category.slug }}/{{ ticket.slug }}">{{ ticket.title }}</a></h4>
-            <p><a href="/{{ ticket.category.slug }}">{{ ticket.category.name }}</a></p>
+            <h4>{{ ticket.creator.display }}: <a href="/{{ ticket.project.slug }}/{{ ticket.slug }}">{{ ticket.title }}</a></h4>
+            <p><a href="/{{ ticket.project.slug }}">{{ ticket.project.name }}</a></p>
             <p>{{ ticket.type }}: {{ ticket.status.name }}</p>
         </div>
         {% endfor %}
@@ -15,8 +15,8 @@
         <h3>WIP</h3>
         {% for ticket in wipTickets %}
         <div class="ticket">
-            <h4>{{ ticket.creator.display }}: <a href="/{{ ticket.category.slug }}/{{ ticket.slug }}">{{ ticket.title }}</a></h4>
-            <p><a href="/{{ ticket.category.slug }}">{{ ticket.category.name }}</a></p>
+            <h4>{{ ticket.creator.display }}: <a href="/{{ ticket.project.slug }}/{{ ticket.slug }}">{{ ticket.title }}</a></h4>
+            <p><a href="/{{ ticket.project.slug }}">{{ ticket.project.name }}</a></p>
             <p>{{ ticket.type }}: {{ ticket.status.name }}</p>
         </div>
         {% endfor %}
@@ -25,8 +25,8 @@
         <h3>Done</h3>
         {% for ticket in doneTickets %}
         <div class="ticket">
-            <h4>{{ ticket.creator.display }}: <a href="/{{ ticket.category.slug }}/{{ ticket.slug }}">{{ ticket.title }}</a></h4>
-            <p><a href="/{{ ticket.category.slug }}">{{ ticket.category.name }}</a></p>
+            <h4>{{ ticket.creator.display }}: <a href="/{{ ticket.project.slug }}/{{ ticket.slug }}">{{ ticket.title }}</a></h4>
+            <p><a href="/{{ ticket.project.slug }}">{{ ticket.project.name }}</a></p>
             <p>{{ ticket.type }}: {{ ticket.status.name }}</p>
         </div>
         {% endfor %}
