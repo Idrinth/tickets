@@ -8,6 +8,15 @@
   list-style: none;
   padding: 1em;
   background: rgba(255,255,255,0.1);
+  color: #fff;
+}
+
+#nav > nav > ul > li > ul {
+  display: none;
+}
+#nav > nav > ul > li:hover > ul {
+  display: block;
+  position:absolute;
 }
 #nav {
   background: black;

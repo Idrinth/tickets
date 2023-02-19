@@ -1,6 +1,6 @@
 {% include 'header.twig' %}
-<h2>Welcome</h2>
-<p>Create a new ticket below</p>
+<h2>New Ticket</h2>
+<p>Create a new ticket below!</p>
 <form method="post">
     <label for="title">Title/Subject</label>
     <input type="text" id="title" name="title" required/>
@@ -15,9 +15,28 @@
     <label for="project">Project</label>
     <select id="project" name="project">
         <option value="">unknown</option>
-        {% for project in projects %}
-            <option value="{{ project.slug }}">{{ project.name }}</option>
-        {% endfor %}
+        <optgroup label="Nexusmods">
+            {% for project in projects %}
+                {% if project.nexusmods is not empty %}
+                    <option title="{{ project.description }}" value="{{ project.slug }}">{{ project.name }}</option>
+                {% endif %}
+            {% endfor %}
+        </optgroup>
+        <optgroup label="Github">
+            {% for project in projects %}
+                {% if project.github is not empty %}
+                    <option title="{{ project.description }}" value="{{ project.slug }}">{{ project.name }}</option>
+                {% endif %}
+            {% endfor %}
+        </optgroup>
+        <optgroup label="Other">
+            {% for project in projects %}
+                {% if project.github is empty and project.nexusmods is empty %}
+                    <option title="{{ project.description }}" value="{{ project.slug }}">{{ project.name }}</option>
+                {% endif %}
+            {% endfor %}
+        </optgroup>
     </select>
     <button type="submit">Create</button>
 </form>
+{% include 'footer.twig' %}

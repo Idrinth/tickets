@@ -18,21 +18,21 @@
                     <li>Nexusmods<ul>
                 {% for project in projects %}
                     {% if project.nexusmods is not empty %}
-                        <li><a href="/{{ project.slug }}">{{ project.name }}</a></li>
+                        <li title="{{ project.description }}"><a href="/{{ project.slug }}">{{ project.name }}</a></li>
                     {% endif %}
                 {% endfor %}
                         </ul></li>
                     <li>Github<ul>
                 {% for project in projects %}
                     {% if project.github is not empty %}
-                        <li><a href="/{{ project.slug }}">{{ project.name }}</a></li>
+                        <li title="{{ project.description }}"><a href="/{{ project.slug }}">{{ project.name }}</a></li>
                     {% endif %}
                 {% endfor %}
                         </ul></li>
                     <li>Other<ul>
                 {% for project in projects %}
                     {% if project.github is empty and project.nexusmods is empty %}
-                        <li><a href="/{{ project.slug }}">{{ project.name }}</a></li>
+                        <li title="{{ project.description }}"><a href="/{{ project.slug }}">{{ project.name }}</a></li>
                     {% endif %}
                 {% endfor %}
                         </ul></li>
