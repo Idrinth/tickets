@@ -33,9 +33,8 @@ class Ticket
         }
         if (isset($_SESSION['id']) && isset($post['content'])) {
             $this->database
-                ->prepare('INSERT INTO comments (`ticket`,`user`,`created`,`content`) VALUES (:ticket,:user,NOW(),:content)')
+                ->prepare('INSERT INTO comments (`ticket`,`creator`,`created`,`content`) VALUES (:ticket,:user,NOW(),:content)')
                 ->execute([':ticket' => $ticket['aid'],':user' => $_SESSION['id'],':content' => $post['content']]);
-            var_dump($this->database->errorInfo());
         }
         $stmt = $this->database->prepare('SELECT * FROM comments WHERE ticket=:id');
         $stmt->execute([':id' => $ticket['aid']]);
