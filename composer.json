@@ -1,0 +1,21 @@
+{
+    "name": "vendor/tickets",
+    "description": "Description of project tickets.",
+    "authors": [
+        {
+            "name": "Björn Büttner",
+            "homepage": "https://github.com/idrinth"
+        }
+    ],
+    "require": {
+        "nikic/fast-route": "*",
+        "twig/twig": "*",
+        "vlucas/phpdotenv": "*",
+        "erusev/parsedown": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "De\\Idrinth\\Tickets\\": "src"
+        }
+    }
+}
