@@ -14,9 +14,28 @@
             <nav>
                 <ul>
                     <li><a href="/">Home</a></li>
+                    <li><a href="/new">New Ticket</a></li>
+                    <li>Nexusmods<ul>
                 {% for project in projects %}
-                    <li><a href="/{{ project.slug }}">{{ project.name }}</a></li>
+                    {% if project.nexusmods %}
+                        <li><a href="/{{ project.slug }}">{{ project.name }}</a></li>
+                    {% endif %}
                 {% endfor %}
+                        </ul></li>
+                    <li>Github<ul>
+                {% for project in projects %}
+                    {% if project.github %}
+                        <li><a href="/{{ project.slug }}">{{ project.name }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                        </ul></li>
+                    <li>Other<ul>
+                {% for project in projects %}
+                    {% if not project.github and not project.nexusmods %}
+                        <li><a href="/{{ project.slug }}">{{ project.name }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                        </ul></li>
                 </ul>
             </nav>
         </div>

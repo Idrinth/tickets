@@ -43,3 +43,7 @@ h1,h2,h3,h4,h5 {
 .board {
   display: flex;
 }
+form {
+  display: grid;
+  grid-template-columns: 50% 50%;
+}
