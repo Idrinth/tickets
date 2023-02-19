@@ -2,6 +2,9 @@
 
 namespace De\Idrinth\Tickets\Pages;
 
+use De\Idrinth\Tickets\Twig;
+use PDO;
+
 class Login
 {
     private Twig $twig;
