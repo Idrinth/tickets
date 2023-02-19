@@ -10,7 +10,6 @@
   background: rgba(255,255,255,0.1);
   color: #fff;
 }
-
 #nav > nav > ul > li > ul {
   display: none;
 }
@@ -73,4 +72,8 @@ form {
 }
 #content a {
     color: #a00;
+}
+h1,h2,h3,h4,h5,p {
+    padding: 0.5em;
+    margin: 0;
 }
