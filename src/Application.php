@@ -52,7 +52,7 @@ class Application
     private function init(ReflectionClass $class): object
     {
         $args = [];
-        $constructor = $rf->getConstructor();
+        $constructor = $class->getConstructor();
         if ($constructor instanceof ReflectionMethod) {
             foreach ($constructor->getParameters() as $parameter) {
                 $args[] = $this->singletons[$parameter->getType()->getName()] ?? $this->init($parameter->getClass());
