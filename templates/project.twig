@@ -1,5 +1,7 @@
 {% include 'header.twig' %}
-<h2><a target="_blank" href="{% if project.nexusmods %}https://www.nexusmods.com/skyrimspecialedition/mods/{{ project.nexusmods }}{% elseif project.github %}https://github.com/{{ project.github }}{% endif %}">{{ project.name }}</a></h2>
+<h2>{{ project.name }}</a></h2>
+{% if project.nexusmods %}<p>On <a target="_blank" href="https://www.nexusmods.com/skyrimspecialedition/mods/{{ project.nexusmods }}">Nexusmods</a></p>{% endif %}
+{% if project.github %}<p>On <a href="https://github.com/{{ project.github }}" target="_blank">Github</a></p>{% endif %}
 {% if project.url %}<p>Deployed to <a href="{{ project.url }}" target="_blank">live</a></p>{% endif %}
 <p>{{ project.description }}</p>
 <div class="board">
@@ -8,7 +10,6 @@
         {% for ticket in newTickets %}
         <div class="ticket">
             <h4>{{ ticket.creator.display }}: <a href="/{{ project.slug }}/{{ ticket.slug }}">{{ ticket.title }}</a></h4>
-            <p><a href="/{{ project.slug }}">{{ project.name }}</a></p>
             <p>{{ ticket.type }}: {{ ticket.status.name }}</p>
         </div>
         {% endfor %}
@@ -18,7 +19,6 @@
         {% for ticket in wipTickets %}
         <div class="ticket">
             <h4>{{ ticket.creator.display }}: <a href="/{{ project.slug }}/{{ ticket.slug }}">{{ ticket.title }}</a></h4>
-            <p><a href="/{{ project.slug }}">{{ project.name }}</a></p>
             <p>{{ ticket.type }}: {{ ticket.status.name }}</p>
         </div>
         {% endfor %}
@@ -28,7 +28,6 @@
         {% for ticket in doneTickets %}
         <div class="ticket">
             <h4>{{ ticket.creator.display }}: <a href="/{{ project.slug }}/{{ ticket.slug }}">{{ ticket.title }}</a></h4>
-            <p><a href="/{{ project.slug }}">{{ project.name }}</a></p>
             <p>{{ ticket.type }}: {{ ticket.status.name }}</p>
         </div>
         {% endfor %}
