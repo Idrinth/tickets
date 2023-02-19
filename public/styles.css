@@ -17,6 +17,7 @@
 #nav > nav > ul > li:hover > ul {
   display: block;
   position:absolute;
+  background: #111;
 }
 #nav {
   background: black;
