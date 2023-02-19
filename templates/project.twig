@@ -1,5 +1,6 @@
 {% include 'header.twig' %}
-<h2><a target="_blank" href="{% if project.nexusmods %}https://www.nexusmods.com/skyrimspecialedition/mods/{{ project.nexusmods }}{% elseif project.github %}https://github.com/{{ project.github }}{% else %}{{ project.url }}{% endif %}">{{ project.name }}</a></h2>
+<h2><a target="_blank" href="{% if project.nexusmods %}https://www.nexusmods.com/skyrimspecialedition/mods/{{ project.nexusmods }}{% elseif project.github %}https://github.com/{{ project.github }}{% endif %}">{{ project.name }}</a></h2>
+{% if project.url %}<p>Deployed to <a href="{{ project.url }}" target="_blank">live</a></p>{% endif %}
 <p>{{ project.description }}</p>
 <div class="board">
     <div class="column">
