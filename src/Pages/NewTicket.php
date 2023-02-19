@@ -12,7 +12,7 @@ class NewTicket
     {
         $this->twig = $twig;
     }
-    public function run()
+    public function run($post)
     {
         return $this->twig->render('new');
     }

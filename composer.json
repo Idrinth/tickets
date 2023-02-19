@@ -1,5 +1,5 @@
 {
-    "name": "vendor/tickets",
+    "name": "idrinth/tickets",
     "description": "Description of project tickets.",
     "authors": [
         {
@@ -11,7 +11,8 @@
         "nikic/fast-route": "*",
         "twig/twig": "*",
         "vlucas/phpdotenv": "*",
-        "erusev/parsedown": "*"
+        "erusev/parsedown": "*",
+        "wohali/oauth2-discord-new": "^1.1"
     },
     "autoload": {
         "psr-4": {
