@@ -1,0 +1,35 @@
+{% include 'header.twig' %}
+<h2>Welcome</h2>
+<div class="board">
+    <div class="column">
+        <h3>New</h3>
+        {% for ticket in newTickets %}
+        <div class="ticket">
+            <h3><a href="/t/{{ ticket.slug }}">{{ ticket.title }}</a></h3>
+            <p><a href="/{{ ticket.category.slug }}">{{ ticket.category.name }}</a></p>
+            <p>{{ ticket.type }}: {{ ticket.status.name }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="column">
+        <h3>WIP</h3>
+        {% for ticket in wipTickets %}
+        <div class="ticket">
+            <h3><a href="/t/{{ ticket.slug }}">{{ ticket.title }}</a></h3>
+            <p><a href="/{{ ticket.category.slug }}">{{ ticket.category.name }}</a></p>
+            <p>{{ ticket.type }}: {{ ticket.status.name }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="column">
+        <h3>Done</h3>
+        {% for ticket in doneTickets %}
+        <div class="ticket">
+            <h3><a href="/t/{{ ticket.slug }}">{{ ticket.title }}</a></h3>
+            <p><a href="/{{ ticket.category.slug }}">{{ ticket.category.name }}</a></p>
+            <p>{{ ticket.type }}: {{ ticket.status.name }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% include 'footer.twig' %}

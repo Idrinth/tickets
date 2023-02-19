@@ -12,6 +12,7 @@
         <div id="nav">
             <nav>
                 <ul>
+                    <li><a href="/">Home</a></li>
                 {% for project in projects %}
                     <li><a href="/{{ project.slug }}">{{ project.name }}</a></li>
                 {% endfor %}
