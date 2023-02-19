@@ -12,13 +12,12 @@ class Twig
     private Environment $twig;
     private PDO $database;
 
-    public function __construct(Environment $twig, PDO $database)
+    public function __construct(Environment $twig, PDO $database, Parsedown $pd)
     {
         $this->twig = $twig;
         $this->database = $database;
-        $pd = new Parsedown();
         $pd->setSafeMode(true);
-        $this->twig->addFunction(new TwigFilter('markdown', function ($content) use ($pd) {
+        $this->twig->addFilter(new TwigFilter('markdown', function ($content) use ($pd) {
             return $pd->text($content);
         }));
     }
