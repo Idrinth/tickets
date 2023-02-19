@@ -71,3 +71,6 @@ form {
 #header span {
     padding: 1em;
 }
+#content a {
+    color: #a00;
+}
