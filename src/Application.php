@@ -92,7 +92,7 @@ class Application
                 $vars = $routeInfo[2];
                 $obj = $this->init(new ReflectionClass($routeInfo[1]));
                 try {
-                    $obj->run($_POST, ...array_values($vars));
+                    echo $obj->run($_POST, ...array_values($vars));
                 } catch (Throwable $t) {
                     header('', true, 500);
                     echo "Failed with {$t->getMessage()}";
