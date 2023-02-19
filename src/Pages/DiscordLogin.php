@@ -39,7 +39,7 @@ class DiscordLogin
         $user = $provider->getResourceOwner($token);
         $_SESSION['user'] = $user->getUsername();
         $_SESSION['discriminator'] = $user->getDiscriminator();
-        $stmt = $this->database->prepare('SELECT aid FROM users WHERE discord_id=:discordId');
+        $stmt = $this->database->prepare('SELECT aid FROM users WHERE discord=:discordId');
         $stmt->execute([
                 ':discordId' => $user->getId(),
             ]);
@@ -52,14 +52,14 @@ class DiscordLogin
                     ':display' => $user->getUsername() . '#' . $user->getDiscriminator(),
                 ]);
             $stmt = $this->database
-                ->prepare("SELECT aid FROM users WHERE discord_id=:discordId");
+                ->prepare("SELECT aid FROM users WHERE discord=:discordId");
             $stmt->execute([
                 ':discordId' => $user->getId(),
             ]);
             $_SESSION['id'] = intval($stmt->fetchColumn(), 10);
         }
         $this->database
-            ->prepare("UPDATE users SET display=:display WHERE discord_id=:discordId")
+            ->prepare("UPDATE users SET display=:display WHERE discord=:discordId")
             ->execute([
                 ':discordId' => $user->getId(),
                 ':name' => $user->getUsername() . '#' . $user->getDiscriminator(),
