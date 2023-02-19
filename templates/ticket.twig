@@ -3,14 +3,18 @@
     <h2>{{ ticket.title }}</h2>
     <p>Created: {{ ticket.created }} by {{ users[ticket.creator] }}</p>
     <p>Modified: {{ ticket.modified }}</p>
+    {% autoescape false %}
     {{ ticket.description | markdown }}
+    {% endautoescape %}
 </div>
 <ul>
 {% for comment in comments %}
     <li class="comment">
         <strong>{{ users[comment.creator] }}</strong>
         <span>{{ comment.created }}</span>
+        {% autoescape false %}
         {{ comment.content | markdown }}
+        {% endautoescape %}
     </li>
 {% endfor %}
 {% if user is not empty and user.aid > 0 %}
