@@ -32,7 +32,7 @@ class Ticket
             return;
         }
         $stmt = $this->database->prepare('SELECT * FROM comments WHERE ticket=:id');
-        $stmt->execute([':id' => $ticket]);
+        $stmt->execute([':id' => $ticket['aid']]);
         $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $this->twig->render('ticket', ['project' => $project, 'ticket' => $ticket, 'comments' => $comments]);
     }
