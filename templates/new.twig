@@ -14,7 +14,7 @@
     </select>
     <label for="project">Project</label>
     <select id="project" name="project">
-        <option value="">unknown</option>
+        <option value="unknown">unknown</option>
         <optgroup label="Nexusmods">
             {% for project in projects %}
                 {% if project.nexusmods is not empty %}
