@@ -18,7 +18,7 @@ class Twig
     public function render(string $template, array $context = []): string
     {
         $context['projects'] = $this->database
-            ->query("SELECT name, slug FROM projects")
+            ->query("SELECT * FROM projects")
             ->fetchAll(PDO::FETCH_ASSOC);
         return $this->twig->render("$template.twig", $context);
     }
