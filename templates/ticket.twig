@@ -10,7 +10,7 @@
         <span>{{ comment.created }}</span>
         <p>{{ comment.content }}</p>
     </li>
-    {% if user is not empty %}
+    {% if user is not empty and user.id > 0 %}
         <li>
             <form method="post">
                 <label for="content">Your comment</label>
