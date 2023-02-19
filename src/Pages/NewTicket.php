@@ -29,7 +29,7 @@ class NewTicket
             $stmt->execute(['title' => $post['title'], 'description' => $post['description'],'creator' => $_SESSION['id'],'type' => $post['type'],'project' => $project]);
             $id = $this->database->lastInsertId();
             $slug = base_convert("$id", 10, 36);
-            $stmt
+            $this->database
                 ->prepare('UPDATE tickets SET slug=:slug WHERE aid=:id')
                 ->execute([':slug' => $slug, ':id' => $id]);
             header('Location: /'.$post['project'].'/'.$slug, true, 303);
