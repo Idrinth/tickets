@@ -23,7 +23,7 @@ class NewTicket
         }
         if (isset($post['title']) && isset($post['description']) && isset($post['type']) && isset($post['project'])) {
             $stmt = $this->database->prepare("SELECT aid FROM projects WHERE slug=:slug");
-            $stmt->execute(['title' => $post['project']]);
+            $stmt->execute(['slug' => $post['project']]);
             $project = $stmt->fetchColumn();
             $stmt = $this->database->prepare("INSERT INTO tickets (`title`,`description`,`creator`,`type`,`status`,`created`,`modified`,`project`) VALUES (:title,:description,:creator,:type,1,NOW(),NOW(),:project)");
             $stmt->execute([':title' => $post['title'], ':description' => $post['description'], ':creator' => $_SESSION['id'],':type' => $post['type'],':project' => $project]);
@@ -33,7 +33,7 @@ class NewTicket
             $this->database
                 ->prepare('UPDATE tickets SET slug=:slug WHERE aid=:id')
                 ->execute([':slug' => $slug, ':id' => $id]);
-            //header('Location: /'.$post['project'].'/'.$slug, true, 303);
+            header('Location: /'.$post['project'].'/'.$slug, true, 303);
             return;
         }
         return $this->twig->render('new');
