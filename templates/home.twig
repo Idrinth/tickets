@@ -13,7 +13,7 @@
         {% endfor %}
     </div>
     <div class="column">
-        <h3>{{ nwipTickets | length }} WIP</h3>
+        <h3>{{ wipTickets | length }} WIP</h3>
         {% for ticket in wipTickets %}
         <div class="ticket {{ ticket.type }}">
             <h4>{{ ticket.creator.display }}: <a href="/{{ ticket.project.slug }}/{{ ticket.slug }}">{{ ticket.title }}</a></h4>
