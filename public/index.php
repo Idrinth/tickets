@@ -23,6 +23,6 @@ require dirname(__DIR__) . '/vendor/autoload.php';
     ->get('/post', Login::class)
     ->get('/new', NewTicket::class)
     ->get('/{project:[a-z-]+}', Project::class)
-    ->get('/{project:[a-z-]+}/{ticket:[a-zA-Z0-9]+}', Ticket::class)
-    ->post('/{project:[a-z-]+}/{ticket:[a-zA-Z0-9]+}', Ticket::class)
+    ->get('/{project:[a-z-]+}/{ticket:[a-z0-9]+}', Ticket::class)
+    ->post('/{project:[a-z-]+}/{ticket:[a-z0-9]+}', Ticket::class)
     ->run();
