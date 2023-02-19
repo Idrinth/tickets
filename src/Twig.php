@@ -20,12 +20,15 @@ class Twig
         $context['projects'] = $this->database
             ->query("SELECT * FROM projects")
             ->fetchAll(PDO::FETCH_ASSOC);
-        $stmt = $this->database
-            ->prepare("SELECT * FROM users WHERE aid=:aid");
-        $stmt->execute([
-            ':aid' => $_SESSION['id'],
-        ]);
-        $context['user'] = $stmt->fetch(PDO::FETCH_ASSOC);
+        $context['user'] = [];
+        if (isset($_SESSION['id'])) {
+            $stmt = $this->database
+                ->prepare("SELECT * FROM users WHERE aid=:aid");
+            $stmt->execute([
+                ':aid' => $_SESSION['id'],
+            ]);
+            $context['user'] = $stmt->fetch(PDO::FETCH_ASSOC);
+        }
         return $this->twig->render("$template.twig", $context);
     }
 }
