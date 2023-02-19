@@ -49,7 +49,18 @@ class Application
         $this->routes[$path][$method] = $class;
         return $this;
     }
-
+    private function init(ReflectionClass $class): object
+    {
+        $args = [];
+        $constructor = $rf->getConstructor();
+        if ($constructor instanceof ReflectionMethod) {
+            foreach ($constructor->getParameters() as $parameter) {
+                $args[] = $this->singletons[$parameter->getType()->getName()] ?? $this->init($parameter->getClass());
+            }
+        }
+        $handler = $class->name;
+        return new $handler(...$args);
+    }
     public function run(): void
     {
         $dispatcher = simpleDispatcher(function(RouteCollector $r) {
@@ -78,17 +89,8 @@ class Application
                 echo "405 METHOD NOT ALLOWED";
                 break;
             case Dispatcher::FOUND:
-                $handler = $routeInfo[1];
                 $vars = $routeInfo[2];
-                $rf = new ReflectionClass($handler);
-                $args = [];
-                $constructor = $rf->getConstructor();
-                if ($constructor instanceof ReflectionMethod) {
-                    foreach ($constructor->getParameters() as $parameter) {
-                        $args[] = $this->singletons[$parameter->getType()->getName()];
-                    }
-                }
-                $obj = new $handler(...$args);
+                $obj = $this->init(new ReflectionClass($routeInfo[1]));
                 try {
                     $obj->run($_POST, ...array_values($vars));
                 } catch (Throwable $t) {
