@@ -1,0 +1,22 @@
+{% include 'header.twig' %}
+<h2>Welcome</h2>
+<p>Create a new ticket below</p>
+<form method="post">
+    <label for="title">Title</label>
+    <input type="text" id="title" name="title" required/>
+    <label for="description">Description</label>
+    <textarea id="description" name="description"></textarea>
+    <label for="type">Type</label>
+    <select id="type" name="type">
+        <option value="bug">Bug(an error)</option>
+        <option value="feature">Feature(something new or changed)</option>
+        <option value="service">Service Request(everything else)</option>
+    </select>
+    <label for="project">Project</label>
+    <textarea id="project" name="project">
+        <option value="">unknown</option>
+        {% for project in projects %}
+            <option value="{{ project.slug }}">{{ project.name }}</option>
+        {% endfor %}
+    </textarea>
+</form>
