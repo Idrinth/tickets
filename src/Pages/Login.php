@@ -49,6 +49,9 @@ class Login
                 $_ENV['MAIL_PASSWORD'],
                 OP_SECURE
             );
+            if ($mbox === false) {
+                return $this->twig->render('login-sent-failed', ['title' => 'Login']);
+            }
             $envelopes = [
                 'from' => 'Idrinth\'s Tickets (idrinth) <ticket@idrinth.de>',
                 'to' => "{$post['display']} <{$post['mail']}>",
@@ -64,10 +67,7 @@ class Login
                         'subtype' => 'plain',
                         'charset' => 'utf-8',
                         'contents.data' => "If you didn't plan to login, just ignore this mail. Otherwise go to https://tickets.idrinth.de/email-login/$oneTime",
-                    ]],
-                    "From: Idrinth\'s Tickets (idrinth) <ticket@idrinth.de>\r\n"
-                    . "To: {$post['display']} <{$post['mail']}>\r\n"
-                    . "Return-Path: webmaster@idrinth.de\r\n"
+                    ]]
                 )
             );
             imap_close($mbox);
