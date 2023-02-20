@@ -62,6 +62,10 @@ class Ticket
                 $this->database
                     ->prepare('INSERT INTO times (`user`,`ticket`,`day`,`duration`,`status`) VALUES (:user,:ticket,:day,:duration,:status)')
                     ->execute([':user' => $_SESSION['id'],':ticket' => $ticket['aid'],':day' => date('Y-m-d'),':duration' => $post['duration'],':status' => $post['task']]);
+            } elseif($isContributor && isset($post['status'])) {
+                $this->database
+                    ->prepare('UPDTAE tickets SET `status`=:status WHERE aid=:aid')
+                    ->execute([':status' => $post['status'],':ticket' => $ticket['aid']]);
             }
             $this->database
                 ->prepare('UPDATE notifications SET `read`=NOW() WHERE `read` IS NULL AND `user`=:user AND ticket=:ticket')
