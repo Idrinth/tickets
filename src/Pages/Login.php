@@ -52,12 +52,12 @@ class Login
                         'from' => 'Idrinth\'s Tickets (idrinth) <ticket@idrinth.de>',
                         'to' => "{$post['display']} <{$post['mail']}>",
                     ],
-                    [
+                    [[
                         'type' => TYPETEXT,
                         'subtype' => 'plain',
                         'charset' => 'utf-8',
                         'contents.data' => "If you didn't plan to login, just ignore this mail. Otherwise go to https://tickets.idrinth.de/email-login/$oneTime",
-                    ]
+                    ]]
                 )
             );
             imap_close($mbox);
