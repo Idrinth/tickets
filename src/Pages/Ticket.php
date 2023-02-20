@@ -49,6 +49,9 @@ class Ticket
                 ->prepare('UPDATE notifications SET `read`=NOW() WHERE `read` IS NULL AND `user`=:user AND ticket=:ticket')
                 ->execute([':user' => $_SESSION['id'], ':ticket' => $ticket['aid']]);
         }
+        $stmt = $this->database->prepare('SELECT * FROM times INNER JOIN stati ON stati.aid=times.`status` WHERE ticket=:ticket');
+        $stmt->execute([':ticket' => $ticket['aid']]);
+        $times = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $stmt = $this->database->prepare('SELECT * FROM comments WHERE ticket=:id');
         $stmt->execute([':id' => $ticket['aid']]);
         $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -59,6 +62,6 @@ class Ticket
         foreach ($u as $us) {
             $users[$us['aid']] = $us['display'];
         }
-        return $this->twig->render('ticket', ['users' => $users, 'project' => $project, 'ticket' => $ticket, 'comments' => $comments]);
+        return $this->twig->render('ticket', ['times' => $times, 'users' => $users, 'project' => $project, 'ticket' => $ticket, 'comments' => $comments]);
     }
 }

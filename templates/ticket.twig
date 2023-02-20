@@ -6,6 +6,11 @@
     {% autoescape false %}
     {{ ticket.description | markdown }}
     {% endautoescape %}
+    <ul>
+    {% for time in times %}
+        <li>{{ time.duration| date('H:i:s') }} {{ users[time.user] }} {{ time.name }}</li>
+    {% endfor %}
+    </ul>
 </div>
 <ul>
 {% for comment in comments %}
