@@ -41,11 +41,11 @@ class Login
             } else {
                 $this->database
                     ->prepare('UPDATE `users` SET `email`=:mail,`password`=:password,`valid_until`=:valid_until WHERE aid=:aid')
-                    ->execute([':aid' => $id,':email' => $post['mail'],':password' => $oneTime, ':valid_until' => date('Y-m-d H:i:s', time()+3600)]);
+                    ->execute([':aid' => $id,':mail' => $post['mail'],':password' => $oneTime, ':valid_until' => date('Y-m-d H:i:s', time()+3600)]);
             }
             $mbox = imap_open("{{$_ENV['MAIL_HOST']}:{$_ENV['MAIL_PORT']}}INBOX", $_ENV['MAIL_USER'], $_ENV['MAIL_PASSWORD'],  OP_SECURE);
             imap_mail(
-                $post['email'],
+                $post['mail'],
                 'Login-Request tickets.idrinth.de',
                 imap_mail_compose(
                     [
