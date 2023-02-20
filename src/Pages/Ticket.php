@@ -65,7 +65,7 @@ class Ticket
             } elseif($isContributor && isset($post['status'])) {
                 $this->database
                     ->prepare('UPDTAE tickets SET `status`=:status WHERE aid=:aid')
-                    ->execute([':status' => $post['status'],':ticket' => $ticket['aid']]);
+                    ->execute([':status' => $post['status'],':aid' => $ticket['aid']]);
             }
             $this->database
                 ->prepare('UPDATE notifications SET `read`=NOW() WHERE `read` IS NULL AND `user`=:user AND ticket=:ticket')
