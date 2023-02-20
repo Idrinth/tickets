@@ -10,21 +10,21 @@
                 <optgroup label="new">
                 {% for status in stati %}
                     {% if status.type == 'new' %}
-                        <option value="{{ status.aid }}">{{ status.name }}</option>
+                        <option{% if ticket.status == status.aid %} selected{% endif %} value="{{ status.aid }}">{{ status.name }}</option>
                     {% endif %}
                 {% endfor %}
                 </optgroup>
                 <optgroup label="wip">
                 {% for status in stati %}
                     {% if status.type == 'wip' %}
-                        <option value="{{ status.aid }}">{{ status.name }}</option>
+                        <option{% if ticket.status == status.aid %} selected{% endif %} value="{{ status.aid }}">{{ status.name }}</option>
                     {% endif %}
                 {% endfor %}
                 </optgroup>
                 <optgroup label="done">
                 {% for status in stati %}
                     {% if status.type == 'done' %}
-                        <option value="{{ status.aid }}">{{ status.name }}</option>
+                        <option{% if ticket.status == status.aid %} selected{% endif %} value="{{ status.aid }}">{{ status.name }}</option>
                     {% endif %}
                 {% endfor %}
                 </optgroup>
