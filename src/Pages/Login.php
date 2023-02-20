@@ -50,7 +50,7 @@ class Login
             $mailer->Host = $_ENV['MAIL_HOST'];
             $mailer->Username = $_ENV['MAIL_USER'];
             $mailer->Password = $_ENV['MAIL_PASSWORD'];
-            $mailer->Port = intval($_ENV['MAIL_PORT'], 10);
+            $mailer->Port = intval($_ENV['MAIL_PORT_SMTP'], 10);
             $mailer->Body = "If you didn't plan to login, just ignore this mail. Otherwise go to https://tickets.idrinth.de/email-login/$oneTime";
             $mailer->Subject = 'Login-Request tickets.idrinth.de';
             $mailer->SMTPAuth = true;
