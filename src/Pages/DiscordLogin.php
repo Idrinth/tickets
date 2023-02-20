@@ -56,12 +56,6 @@ class DiscordLogin
             ]);
             $_SESSION['id'] = intval($stmt->fetchColumn(), 10);
         }
-        $this->database
-            ->prepare("UPDATE users SET display=:display WHERE discord=:discordId")
-            ->execute([
-                ':discordId' => $user->getId(),
-                ':display' => $user->getUsername() . '#' . $user->getDiscriminator(),
-            ]);
         if (isset($_SESSION['redirect'])) {
             header('Location: ' . $_SESSION['redirect'], true, 303);
             return;
