@@ -17,6 +17,6 @@ class Login
     }
     public function run($post)
     {
-        return $this->twig->render('login');
+        return $this->twig->render('login', ['title' => 'Login']);
     }
 }

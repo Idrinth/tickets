@@ -42,6 +42,6 @@ class NewTicket
             header('Location: /'.$post['project'].'/'.$slug, true, 303);
             return;
         }
-        return $this->twig->render('new');
+        return $this->twig->render('new', ['title' => 'New Ticket']);
     }
 }

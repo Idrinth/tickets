@@ -43,6 +43,6 @@ class Home
                     break;
             }
         }
-        return $this->twig->render('home', ['newTickets' => $newTickets, 'wipTickets' => $wipTickets, 'doneTickets' => $doneTickets]);
+        return $this->twig->render('home', ['title' => 'Home', 'newTickets' => $newTickets, 'wipTickets' => $wipTickets, 'doneTickets' => $doneTickets]);
     }
 }

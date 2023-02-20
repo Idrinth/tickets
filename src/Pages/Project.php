@@ -47,6 +47,6 @@ class Project
                     break;
             }
         }
-        return $this->twig->render('project', ['project' => $project, 'newTickets' => $newTickets, 'wipTickets' => $wipTickets, 'doneTickets' => $doneTickets]);
+        return $this->twig->render('project', ['title' => $project['name'], 'project' => $project, 'newTickets' => $newTickets, 'wipTickets' => $wipTickets, 'doneTickets' => $doneTickets]);
     }
 }

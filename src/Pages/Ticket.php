@@ -113,6 +113,6 @@ class Ticket
         foreach ($this->database->query("SELECT * FROM stati")->fetchAll(PDO::FETCH_ASSOC) as $status) {
             $stati[$status['aid']] = $status;
         }
-        return $this->twig->render('ticket', ['stati' => $stati, 'isContributor' => $isContributor, 'times' => $times, 'users' => $users, 'project' => $project, 'ticket' => $ticket, 'comments' => $comments]);
+        return $this->twig->render('ticket', ['title' => $ticket['title'], 'stati' => $stati, 'isContributor' => $isContributor, 'times' => $times, 'users' => $users, 'project' => $project, 'ticket' => $ticket, 'comments' => $comments]);
     }
 }

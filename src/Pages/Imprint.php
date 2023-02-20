@@ -14,6 +14,6 @@ class Imprint
     }
     public function run()
     {
-        return $this->twig->render('imprint');
+        return $this->twig->render('imprint', ['title' => 'Imprint']);
     }
 }
