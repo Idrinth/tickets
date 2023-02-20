@@ -58,6 +58,10 @@ class Ticket
                         ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
                         ->execute([':url' => "/{$project['slug']}/{$ticket['slug']}#c{$comment}", ':user' => $watcher['user'],':ticket' => $ticket['aid'], ':content' => 'A new comment was written.']);
                 }
+            } elseif($isContributor && isset($post['duration']) && isset($post['task'])) {
+                $this->database
+                    ->prepare('INSERT INTO times (`user`,`ticket`,`day`,`duration`,`status`) VALUES (:user,:ticket,:day,:duration,:status)')
+                    ->execute([':user' => $_SESSION['id'],':ticket' => $ticket['aid'],':day' => date('Y-m-d'),':duration' => $post['duration'],':status' => $post['task']]);
             }
             $this->database
                 ->prepare('UPDATE notifications SET `read`=NOW() WHERE `read` IS NULL AND `user`=:user AND ticket=:ticket')
@@ -71,11 +75,14 @@ class Ticket
         $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $stmt = $this->database->prepare('SELECT aid,display FROM users');
         $stmt->execute([':id' => $ticket['aid']]);
-        $u = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $users = [];
-        foreach ($u as $us) {
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $us) {
             $users[$us['aid']] = $us['display'];
         }
-        return $this->twig->render('ticket', ['isContributor' => $isContributor, 'times' => $times, 'users' => $users, 'project' => $project, 'ticket' => $ticket, 'comments' => $comments]);
+        $stati = [];
+        foreach ($this->database->query("SELECT * FROM stati")->fetchAll(PDO::FETCH_ASSOC) as $status) {
+            $stati[$status['aid']] = $status;
+        }
+        return $this->twig->render('ticket', ['stati' => $stati, 'isContributor' => $isContributor, 'times' => $times, 'users' => $users, 'project' => $project, 'ticket' => $ticket, 'comments' => $comments]);
     }
 }
