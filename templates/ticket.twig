@@ -9,7 +9,7 @@
     {% endautoescape %}</div>
     <ul>
     {% for time in times %}
-        <li>{{ time.duration| date('H:i:s') }} {{ users[time.user] }} {{ time.name }}</li>
+        <li>{{ time.duration | date('H:i:s') }} {{ users[time.user] }} {{ time.name }}</li>
     {% endfor %}
     {% if isContributor %}
     <li>
@@ -19,7 +19,7 @@
             <label for="task">Task</label>
             <select id="task" name="task">
                 {% for status in stati %}
-                    {% if status.type === 'wip' %}
+                    {% if status.type == 'wip' %}
                         <option value="{{ status.aid }}">{{ status.name }}</option>
                     {% endif %}
                 {% endfor %}
