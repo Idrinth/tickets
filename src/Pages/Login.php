@@ -44,7 +44,7 @@ class Login
                     ->execute([':aid' => $id,':mail' => $post['mail'],':password' => $oneTime, ':valid_until' => date('Y-m-d H:i:s', time()+3600)]);
             }
             $mbox = imap_open(
-                "{{$_ENV['MAIL_HOST']}:{$_ENV['MAIL_PORT']}}INBOX",
+                "{{$_ENV['MAIL_HOST']}:{$_ENV['MAIL_PORT']}/imap/ssl}INBOX",
                 $_ENV['MAIL_USER'],
                 $_ENV['MAIL_PASSWORD'],
                 OP_SECURE
