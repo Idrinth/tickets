@@ -46,11 +46,12 @@ class Login
             $mbox = imap_open(
                 "{{$_ENV['MAIL_HOST']}:{$_ENV['MAIL_PORT']}}INBOX",
                 $_ENV['MAIL_USER'],
-                $_ENV['MAIL_PASSWORD']
+                $_ENV['MAIL_PASSWORD'],
+                OP_SECURE
             );
             if ($mbox === false) {
                 var_dump(imap_errors());
-                return $this->twig->render('login-sent-failed', ['title' => 'Login']);
+                #return $this->twig->render('login-sent-failed', ['title' => 'Login']);
             }
             $envelopes = [
                 'from' => 'Idrinth\'s Tickets (idrinth) <ticket@idrinth.de>',
