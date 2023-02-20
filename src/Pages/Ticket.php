@@ -64,11 +64,25 @@ class Ticket
                 $this->database
                     ->prepare('INSERT INTO times (`user`,`ticket`,`day`,`duration`,`status`) VALUES (:user,:ticket,:day,:duration,:status)')
                     ->execute([':user' => $_SESSION['id'],':ticket' => $ticket['aid'],':day' => date('Y-m-d'),':duration' => $post['duration'],':status' => $post['task']]);
+                $stmt = $this->database->prepare('SELECT `user` FROM watchers WHERE ticket=:ticket');
+                $stmt->execute([':ticket' => $ticket['aid']]);
+                foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $watcher) {
+                    $this->database
+                        ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
+                        ->execute([':url' => "/{$project['slug']}/{$ticket['slug']}#c{$comment}", ':user' => $watcher['user'],':ticket' => $ticket['aid'], ':content' => 'Time was tracked.']);
+                }
                 $wasModified=true;
             } elseif($isContributor && isset($post['status'])) {
                 $this->database
                     ->prepare('UPDATE tickets SET `status`=:status WHERE aid=:aid')
                     ->execute([':status' => $post['status'],':aid' => $ticket['aid']]);
+                $stmt = $this->database->prepare('SELECT `user` FROM watchers WHERE ticket=:ticket');
+                $stmt->execute([':ticket' => $ticket['aid']]);
+                foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $watcher) {
+                    $this->database
+                        ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
+                        ->execute([':url' => "/{$project['slug']}/{$ticket['slug']}#c{$comment}", ':user' => $watcher['user'],':ticket' => $ticket['aid'], ':content' => 'Status was changed.']);
+                }
                 $wasModified=true;
             }
             if ($wasModified) {
