@@ -31,7 +31,21 @@ class Ticket
             header('Location: /' . $category, true, 303);
             return;
         }
+        if ($ticket['project'] !== $project['aid']) {
+            $stmt = $this->database->prepare('SELECT slug FROM projects WHERE aid=:aid');
+            $stmt->execute([':aid' => $ticket['project']]);
+            $project = $stmt->fetchColumn();
+            header('Location: /' . $project . '/' . $ticket['slug'], true, 303);
+            return;
+        }
+        $isContributor = false;
         if (isset($_SESSION['id'])) {
+            $this->database
+                ->prepare('INSERT IGNORE INTO roles (project, `user`, role) VALUES (:project,"member",:user)')
+                ->execute([':project' => $project['aid'], ':user' => $_SESSION['id']]);
+            $stmt = $this->database->query('SELECT role FROM roles WHERE project=:project AND `user`=:user');
+            $stmt->execute([':project' => $project['aid'], ':user' => $_SESSION['id']]);
+            $isContributor = $stmt->fetchColumn()==='contributor';
             if (isset($post['content'])) {
                 $this->database
                     ->prepare('INSERT INTO comments (`ticket`,`creator`,`created`,`content`) VALUES (:ticket,:user,NOW(),:content)')
@@ -62,6 +76,6 @@ class Ticket
         foreach ($u as $us) {
             $users[$us['aid']] = $us['display'];
         }
-        return $this->twig->render('ticket', ['times' => $times, 'users' => $users, 'project' => $project, 'ticket' => $ticket, 'comments' => $comments]);
+        return $this->twig->render('ticket', ['isContributor' => $isContributor, 'times' => $times, 'users' => $users, 'project' => $project, 'ticket' => $ticket, 'comments' => $comments]);
     }
 }
