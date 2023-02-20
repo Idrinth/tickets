@@ -95,7 +95,7 @@ class Application
                     echo $obj->run($_POST, ...array_values($vars));
                 } catch (Throwable $t) {
                     header('', true, 500);
-                    echo "Failed with {$t->getMessage()}";
+                    error_log($t->getTraceAsString());
                 }
                 break;
         }
