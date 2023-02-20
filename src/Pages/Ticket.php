@@ -46,7 +46,7 @@ class Ticket
                 }
             }
             $this->database
-                ->prepare('UPDATE notifications SET read=NOW() WHERE read IS NULL AND `user`=:user AND ticket=:ticket')
+                ->prepare('UPDATE notifications SET `read`=NOW() WHERE `read` IS NULL AND `user`=:user AND ticket=:ticket')
                 ->execute([':user' => $_SESSION['id'], ':ticket' => $ticket['aid']]);
         }
         $stmt = $this->database->prepare('SELECT * FROM comments WHERE ticket=:id');
