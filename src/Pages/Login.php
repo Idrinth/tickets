@@ -60,7 +60,7 @@ class Login
                     . "The site is hosted and operated by Björn 'Idrinth' Büttner, see the imprint at https://tickets.idrinth.de/imprint for more information.";
             $mailer->Subject = 'Login-Request on tickets.idrinth.de';
             $mailer->SMTPAuth = true;
-            if ($mailer->send() === false) {
+            if (!$mailer->smtpConnect() || !$mailer->send()) {
                 return $this->twig->render('login-sent-failed', ['title' => 'Login']);
             }
             return $this->twig->render('login-sent', ['title' => 'Login']);
