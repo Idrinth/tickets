@@ -3,7 +3,36 @@
     <h2>{{ ticket.title }}</h2>
     <p>Created: {{ ticket.created }} by {{ users[ticket.creator] }}</p>
     <p>Modified: {{ ticket.modified }}</p>
-    <p>Status: {{ stati[ticket.status].name }}({{ stati[ticket.status].type }})</p>
+    {% if isContributor %}
+        <form method="post" onchange="this.submit();">
+            <label for="status">Status</label>
+            <select name="status" id="status">
+                <optgroup label="new">
+                {% for status in stati %}
+                    {% if status.type == 'new' %}
+                        <option value="{{ status.aid }}">{{ status.name }}</option>
+                    {% endif %}
+                {% endfor %}
+                </optgroup>
+                <optgroup label="wip">
+                {% for status in stati %}
+                    {% if status.type == 'wip' %}
+                        <option value="{{ status.aid }}">{{ status.name }}</option>
+                    {% endif %}
+                {% endfor %}
+                </optgroup>
+                <optgroup label="done">
+                {% for status in stati %}
+                    {% if status.type == 'done' %}
+                        <option value="{{ status.aid }}">{{ status.name }}</option>
+                    {% endif %}
+                {% endfor %}
+                </optgroup>
+            </select>
+        </form>
+    {% else %}
+        <p>Status: {{ stati[ticket.status].name }}({{ stati[ticket.status].type }})</p>
+    {% endif %}
     <div class="description">{% autoescape false %}
     {{ ticket.description | markdown }}
     {% endautoescape %}</div>
