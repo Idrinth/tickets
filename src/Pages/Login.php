@@ -57,7 +57,7 @@ class Login
                     . "<p>The site is hosted and operated by Björn 'Idrinth' Büttner, see the <a href=\"https://tickets.idrinth.de/imprint\">imprint</a> for more information.</p>";
             $mailer->AltBody = "If you didn't plan to login, just ignore this mail.\n"
                     . "Otherwise go to the login at https://tickets.idrinth.de/email-login/$oneTime\n"
-                    . "The site is hosted and operated by Björn 'Idrinth' Büttner, see the imprint for more information.";
+                    . "The site is hosted and operated by Björn 'Idrinth' Büttner, see the imprint at https://tickets.idrinth.de/imprint for more information.";
             $mailer->Subject = 'Login-Request on tickets.idrinth.de';
             $mailer->SMTPAuth = true;
             if ($mailer->send() === false) {
