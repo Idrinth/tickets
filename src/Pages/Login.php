@@ -51,8 +51,14 @@ class Login
             $mailer->Username = $_ENV['MAIL_USER'];
             $mailer->Password = $_ENV['MAIL_PASSWORD'];
             $mailer->Port = intval($_ENV['MAIL_PORT_SMTP'], 10);
-            $mailer->Body = "If you didn't plan to login, just ignore this mail. Otherwise go to https://tickets.idrinth.de/email-login/$oneTime";
-            $mailer->Subject = 'Login-Request tickets.idrinth.de';
+            $mailer->isHTML(true);
+            $mailer->Body = "<p>If you didn't plan to login, just ignore this mail.</p>"
+                    . "<p>Otherwise go to <a href=\"https://tickets.idrinth.de/email-login/$oneTime\">the login</a>.</p>"
+                    . "<p>The site is hosted and operated by Björn 'Idrinth' Büttner, see the <a href=\"https://tickets.idrinth.de/imprint\">imprint</a> for more information.</p>";
+            $mailer->AltBody = "If you didn't plan to login, just ignore this mail.\n"
+                    . "Otherwise go to the login at https://tickets.idrinth.de/email-login/$oneTime\n"
+                    . "The site is hosted and operated by Björn 'Idrinth' Büttner, see the imprint for more information.";
+            $mailer->Subject = 'Login-Request on tickets.idrinth.de';
             $mailer->SMTPAuth = true;
             if ($mailer->send() === false) {
                 return $this->twig->render('login-sent-failed', ['title' => 'Login']);
