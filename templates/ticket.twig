@@ -4,9 +4,9 @@
     <p>Created: {{ ticket.created }} by {{ users[ticket.creator] }}</p>
     <p>Modified: {{ ticket.modified }}</p>
     <p>Status: {{ stati[ticket.status].name }}({{ stati[ticket.status].type }})</p>
-    {% autoescape false %}
+    <div class="description">{% autoescape false %}
     {{ ticket.description | markdown }}
-    {% endautoescape %}
+    {% endautoescape %}</div>
     <ul>
     {% for time in times %}
         <li>{{ time.duration| date('H:i:s') }} {{ users[time.user] }} {{ time.name }}</li>
