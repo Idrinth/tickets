@@ -17,5 +17,6 @@
             wrapper.appendChild(element);
         }
     };
+    getNotifications();
     window.setInterval(getNotifications, 60000);
 })();
