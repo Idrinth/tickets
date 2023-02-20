@@ -4,6 +4,7 @@ namespace De\Idrinth\Tickets\Pages;
 
 use De\Idrinth\Tickets\Twig;
 use PDO;
+use PHPMailer\PHPMailer\PHPMailer;
 
 class Login
 {
@@ -43,34 +44,19 @@ class Login
                     ->prepare('UPDATE `users` SET `email`=:mail,`password`=:password,`valid_until`=:valid_until WHERE aid=:aid')
                     ->execute([':aid' => $id,':mail' => $post['mail'],':password' => $oneTime, ':valid_until' => date('Y-m-d H:i:s', time()+3600)]);
             }
-            $mbox = imap_open(
-                "{{$_ENV['MAIL_HOST']}:{$_ENV['MAIL_PORT']}/imap/ssl}INBOX",
-                $_ENV['MAIL_USER'],
-                $_ENV['MAIL_PASSWORD'],
-                OP_SECURE
-            );
-            if ($mbox === false) {
+            $mailer = new PHPMailer();
+            $mailer->setFrom('ticket@idrinth.de', 'Idrinth\'s Tickets (idrinth)');
+            $mailer->addAddress($post['mail'], $post['display']);
+            $mailer->Host = $_ENV['MAIL_HOST'];
+            $mailer->Username = $_ENV['MAIL_USER'];
+            $mailer->Password = $_ENV['MAIL_PASSWORD'];
+            $mailer->Port = intval($_ENV['MAIL_PORT'], 10);
+            $mailer->Body = "If you didn't plan to login, just ignore this mail. Otherwise go to https://tickets.idrinth.de/email-login/$oneTime";
+            $mailer->Subject = 'Login-Request tickets.idrinth.de';
+            $mailer->SMTPAuth = true;
+            if ($mailer->send() === false) {
                 return $this->twig->render('login-sent-failed', ['title' => 'Login']);
             }
-            $envelopes = [
-                'from' => 'Idrinth\'s Tickets (idrinth) <ticket@idrinth.de>',
-                'to' => "{$post['display']} <{$post['mail']}>",
-                'return_path' => 'webmaster@idrinth.de',
-            ];
-            imap_mail(
-                $post['mail'],
-                'Login-Request tickets.idrinth.de',
-                imap_mail_compose(
-                    $envelopes,
-                    [[
-                        'type' => TYPETEXT,
-                        'subtype' => 'plain',
-                        'charset' => 'utf-8',
-                        'contents.data' => "If you didn't plan to login, just ignore this mail. Otherwise go to https://tickets.idrinth.de/email-login/$oneTime",
-                    ]]
-                )
-            );
-            imap_close($mbox);
             return $this->twig->render('login-sent', ['title' => 'Login']);
         }
         return $this->twig->render('login', ['title' => 'Login']);
