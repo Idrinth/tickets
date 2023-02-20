@@ -19,7 +19,9 @@
             <label for="task">Task</label>
             <select id="task" name="task">
                 {% for status in stati %}
-                    <option value="{{ status.aid }}">{{ status.name }}</option>
+                    {% if status.type === 'wip' %}
+                        <option value="{{ status.aid }}">{{ status.name }}</option>
+                    {% endif %}
                 {% endfor %}
             </select>
             <button type="submit">Add Time</button>
