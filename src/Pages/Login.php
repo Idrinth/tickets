@@ -46,8 +46,7 @@ class Login
             $mbox = imap_open(
                 "{{$_ENV['MAIL_HOST']}:{$_ENV['MAIL_PORT']}}INBOX",
                 $_ENV['MAIL_USER'],
-                $_ENV['MAIL_PASSWORD'],
-                OP_SECURE
+                $_ENV['MAIL_PASSWORD']
             );
             if ($mbox === false) {
                 var_dump(imap_errors());
