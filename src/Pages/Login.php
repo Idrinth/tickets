@@ -51,7 +51,7 @@ class Login
             );
             if ($mbox === false) {
                 var_dump(imap_errors());
-                #return $this->twig->render('login-sent-failed', ['title' => 'Login']);
+                return $this->twig->render('login-sent-failed', ['title' => 'Login']);
             }
             $envelopes = [
                 'from' => 'Idrinth\'s Tickets (idrinth) <ticket@idrinth.de>',
