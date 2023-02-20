@@ -64,7 +64,7 @@ class Ticket
                     ->execute([':user' => $_SESSION['id'],':ticket' => $ticket['aid'],':day' => date('Y-m-d'),':duration' => $post['duration'],':status' => $post['task']]);
             } elseif($isContributor && isset($post['status'])) {
                 $this->database
-                    ->prepare('UPDTAE tickets SET `status`=:status WHERE aid=:aid')
+                    ->prepare('UPDATE tickets SET `status`=:status WHERE aid=:aid')
                     ->execute([':status' => $post['status'],':aid' => $ticket['aid']]);
             }
             $this->database
