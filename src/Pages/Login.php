@@ -43,21 +43,31 @@ class Login
                     ->prepare('UPDATE `users` SET `email`=:mail,`password`=:password,`valid_until`=:valid_until WHERE aid=:aid')
                     ->execute([':aid' => $id,':mail' => $post['mail'],':password' => $oneTime, ':valid_until' => date('Y-m-d H:i:s', time()+3600)]);
             }
-            $mbox = imap_open("{{$_ENV['MAIL_HOST']}:{$_ENV['MAIL_PORT']}}INBOX", $_ENV['MAIL_USER'], $_ENV['MAIL_PASSWORD'],  OP_SECURE);
+            $mbox = imap_open(
+                "{{$_ENV['MAIL_HOST']}:{$_ENV['MAIL_PORT']}}INBOX",
+                $_ENV['MAIL_USER'],
+                $_ENV['MAIL_PASSWORD'],
+                OP_SECURE
+            );
+            $envelopes = [
+                'from' => 'Idrinth\'s Tickets (idrinth) <ticket@idrinth.de>',
+                'to' => "{$post['display']} <{$post['mail']}>",
+                'return_path' => 'webmaster@idrinth.de',
+            ];
             imap_mail(
                 $post['mail'],
                 'Login-Request tickets.idrinth.de',
                 imap_mail_compose(
-                    [
-                        'from' => 'Idrinth\'s Tickets (idrinth) <ticket@idrinth.de>',
-                        'to' => "{$post['display']} <{$post['mail']}>",
-                    ],
+                    $envelopes,
                     [[
                         'type' => TYPETEXT,
                         'subtype' => 'plain',
                         'charset' => 'utf-8',
                         'contents.data' => "If you didn't plan to login, just ignore this mail. Otherwise go to https://tickets.idrinth.de/email-login/$oneTime",
-                    ]]
+                    ]],
+                    "From: Idrinth\'s Tickets (idrinth) <ticket@idrinth.de>\r\n"
+                    . "To: {$post['display']} <{$post['mail']}>\r\n"
+                    . "Return-Path: webmaster@idrinth.de\r\n"
                 )
             );
             imap_close($mbox);
