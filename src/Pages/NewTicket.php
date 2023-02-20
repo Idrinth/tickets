@@ -32,6 +32,13 @@ class NewTicket
             $this->database
                 ->prepare('UPDATE tickets SET slug=:slug WHERE aid=:id')
                 ->execute([':slug' => $slug, ':id' => $id]);
+            $stmt = $this->database->prepare("SELECT `user` FROM role WHERE role='contributor' AND project=:project");
+            $stmt->execute([':project' => $project['aid']]);
+            foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $watcher) {
+                $this->database
+                    ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
+                    ->execute([':url' => '/'.$post['project'].'/'.$slug, ':user' => $watcher['user'],':ticket' => $id, ':content' => 'A new ticket was written.']);
+            }
             header('Location: /'.$post['project'].'/'.$slug, true, 303);
             return;
         }

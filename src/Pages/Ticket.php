@@ -31,10 +31,23 @@ class Ticket
             header('Location: /' . $category, true, 303);
             return;
         }
-        if (isset($_SESSION['id']) && isset($post['content'])) {
+        if (isset($_SESSION['id'])) {
+            if (isset($post['content'])) {
+                $this->database
+                    ->prepare('INSERT INTO comments (`ticket`,`creator`,`created`,`content`) VALUES (:ticket,:user,NOW(),:content)')
+                    ->execute([':ticket' => $ticket['aid'],':user' => $_SESSION['id'],':content' => $post['content']]);
+                $comment = $this->database->lastInsertId();
+                $stmt = $this->database->prepare('SELECT `user` FROM watchers WHERE ticket=:ticket');
+                $stmt->execute([':ticket' => $ticket['aid']]);
+                foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $watcher) {
+                    $this->database
+                        ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
+                        ->execute([':url' => "/{$project['slug']}/{$ticket['slug']}#c{$comment}", ':user' => $watcher['user'],':ticket' => $ticket['aid'], ':content' => 'A new comment was written.']);
+                }
+            }
             $this->database
-                ->prepare('INSERT INTO comments (`ticket`,`creator`,`created`,`content`) VALUES (:ticket,:user,NOW(),:content)')
-                ->execute([':ticket' => $ticket['aid'],':user' => $_SESSION['id'],':content' => $post['content']]);
+                ->prepare('UPDATE notifications SET read=NOW() WHERE read IS NULL AND `user`=:user AND ticket=:ticket')
+                ->execute([':user' => $_SESSION['id'], ':ticket' => $ticket['aid']]);
         }
         $stmt = $this->database->prepare('SELECT * FROM comments WHERE ticket=:id');
         $stmt->execute([':id' => $ticket['aid']]);
