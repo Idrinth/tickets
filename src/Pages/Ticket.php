@@ -43,7 +43,7 @@ class Ticket
             $this->database
                 ->prepare('INSERT IGNORE INTO roles (project, `user`, `role`) VALUES (:project,"member",:user)')
                 ->execute([':project' => $project['aid'], ':user' => $_SESSION['id']]);
-            $stmt = $this->database->query('SELECT `role` FROM roles WHERE project=:project AND `user`=:user');
+            $stmt = $this->database->prepare('SELECT `role` FROM roles WHERE project=:project AND `user`=:user');
             $stmt->execute([':project' => $project['aid'], ':user' => $_SESSION['id']]);
             $isContributor = $stmt->fetchColumn()==='contributor';
             if (isset($post['content'])) {
