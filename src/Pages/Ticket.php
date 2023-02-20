@@ -39,6 +39,7 @@ class Ticket
             return;
         }
         $isContributor = false;
+        $wasModified=false;
         if (isset($_SESSION['id'])) {
             $this->database
                 ->prepare('INSERT IGNORE INTO roles (project, `user`, `role`) VALUES (:project,:user,"member")')
@@ -58,14 +59,25 @@ class Ticket
                         ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
                         ->execute([':url' => "/{$project['slug']}/{$ticket['slug']}#c{$comment}", ':user' => $watcher['user'],':ticket' => $ticket['aid'], ':content' => 'A new comment was written.']);
                 }
+                $wasModified=true;
             } elseif($isContributor && isset($post['duration']) && isset($post['task'])) {
                 $this->database
                     ->prepare('INSERT INTO times (`user`,`ticket`,`day`,`duration`,`status`) VALUES (:user,:ticket,:day,:duration,:status)')
                     ->execute([':user' => $_SESSION['id'],':ticket' => $ticket['aid'],':day' => date('Y-m-d'),':duration' => $post['duration'],':status' => $post['task']]);
+                $wasModified=true;
             } elseif($isContributor && isset($post['status'])) {
                 $this->database
                     ->prepare('UPDATE tickets SET `status`=:status WHERE aid=:aid')
                     ->execute([':status' => $post['status'],':aid' => $ticket['aid']]);
+                $wasModified=true;
+            }
+            if ($wasModified) {
+                $this->database
+                    ->prepare('UPDATE tickets SET modified=NOW() WHERE aid=:aid')
+                    ->execute([':aid' => $ticket['aid']]);
+                $stmt = $this->database->prepare('SELECT * FROM tickets WHERE aid=:aid');
+                $stmt->execute([':aid' => $ticket['aid']]);
+                $ticket = $stmt->fetch(PDO::FETCH_ASSOC);
             }
             $this->database
                 ->prepare('UPDATE notifications SET `read`=NOW() WHERE `read` IS NULL AND `user`=:user AND ticket=:ticket')
