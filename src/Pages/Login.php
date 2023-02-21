@@ -75,12 +75,12 @@ class Login
             $mailer->Timeout = 60;
             $mailer->isHTML(true);
             $mailer->Mailer ='smtp';
+            $mailer->Subject = 'Login Request at ticket.idrinth.de';
             $mailer->Body = $this->twig->render(
                 'login-mail',
                 ['oneTime' => $oneTime, 'name' => $post['display']]
             );
             $mailer->SMTPAuth = true;
-            #$mailer->SMTPDebug = \PHPMailer\PHPMailer\SMTP::DEBUG_LOWLEVEL;
             if (!$mailer->smtpConnect()) {
                 error_log('Mailer failed smtp connect.');
                 return $this->twig->render('login-sent-failed', ['title' => 'Login']);
