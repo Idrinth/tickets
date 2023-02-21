@@ -81,6 +81,7 @@ class Login
                 'login-mail',
                 ['oneTime' => $oneTime, 'name' => $post['display']]
             );
+            $mailer->AltBody = strip_tags($mailer->Body);
             $mailer->SMTPAuth = true;
             if (!$mailer->smtpConnect()) {
                 error_log('Mailer failed smtp connect.');
