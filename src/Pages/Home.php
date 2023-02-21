@@ -31,6 +31,9 @@ class Home
             $stmt = $this->database->prepare('SELECT * FROM projects WHERE aid=:aid');
             $stmt->execute([':aid' => $ticket['project']]);
             $ticket['project'] = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt = $this->database->prepare('SELECT COUNT(*) FROM upvotes WHERE ticket=:aid');
+            $stmt->execute([':aid' => $ticket['aid']]);
+            $ticket['upvotes'] = $stmt->fetchColumn();
             switch ($ticket['status']['type']) {
                 case 'new':
                     $newTickets[] = $ticket;

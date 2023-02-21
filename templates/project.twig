@@ -9,7 +9,7 @@
         <h3>{{ newTickets | length }} New</h3>
         {% for ticket in newTickets %}
         <div class="ticket {{ ticket.type }}">
-            <h4>{{ ticket.creator.display }}: <a href="/{{ project.slug }}/{{ ticket.slug }}">{{ ticket.title }}</a></h4>
+            <h4>{{ ticket.creator.display }}: <a href="/{{ project.slug }}/{{ ticket.slug }}">{{ ticket.title }}</a> +{{ ticket.upvotes }}</h4>
             <p>{{ ticket.type }}: {{ ticket.status.name }}</p>
         </div>
         {% endfor %}
@@ -18,7 +18,7 @@
         <h3>{{ wipTickets | length }} WIP</h3>
         {% for ticket in wipTickets %}
         <div class="ticket {{ ticket.type }}">
-            <h4>{{ ticket.creator.display }}: <a href="/{{ project.slug }}/{{ ticket.slug }}">{{ ticket.title }}</a></h4>
+            <h4>{{ ticket.creator.display }}: <a href="/{{ project.slug }}/{{ ticket.slug }}">{{ ticket.title }}</a> +{{ ticket.upvotes }}</h4>
             <p>{{ ticket.type }}: {{ ticket.status.name }}</p>
         </div>
         {% endfor %}
@@ -27,7 +27,7 @@
         <h3>{{ doneTickets | length }} Done</h3>
         {% for ticket in doneTickets %}
         <div class="ticket {{ ticket.type }}">
-            <h4>{{ ticket.creator.display }}: <a href="/{{ project.slug }}/{{ ticket.slug }}">{{ ticket.title }}</a></h4>
+            <h4>{{ ticket.creator.display }}: <a href="/{{ project.slug }}/{{ ticket.slug }}">{{ ticket.title }}</a> +{{ ticket.upvotes }}</h4>
             <p>{{ ticket.type }}: {{ ticket.status.name }}</p>
         </div>
         {% endfor %}

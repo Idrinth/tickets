@@ -40,6 +40,7 @@ class Ticket
         }
         $isContributor = false;
         $wasModified=false;
+        $isUpvoter = false;
         if (isset($_SESSION['id'])) {
             if ($_SESSION['id'] === 1) {
                 $this->database
@@ -50,6 +51,9 @@ class Ticket
                     ->prepare('INSERT IGNORE INTO roles (project, `user`, `role`) VALUES (:project,:user,"member")')
                     ->execute([':project' => $project['aid'], ':user' => $_SESSION['id']]);
             }
+            $stmt = $this->database->prepare('SELECT COUNT(*) FROM upvotes WhERE `user`=:user AND ticket=:ticket');
+            $stmt->execute([':ticket' => $ticket['aid'], ':user' => $_SESSION['id']]);
+            $isUpvoter = $stmt->fetchColumn()==='1';
             $stmt = $this->database->prepare('SELECT `role` FROM roles WHERE project=:project AND `user`=:user');
             $stmt->execute([':project' => $project['aid'], ':user' => $_SESSION['id']]);
             $isContributor = $stmt->fetchColumn()==='contributor';
@@ -64,6 +68,19 @@ class Ticket
                     $this->database
                         ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
                         ->execute([':url' => "/{$project['slug']}/{$ticket['slug']}#c{$comment}", ':user' => $watcher['user'],':ticket' => $ticket['aid'], ':content' => 'A new comment was written.']);
+                }
+                $wasModified=true;
+            } elseif (isset($post['vote'])) {
+                if ($isUpvoter) {
+                    $this->database
+                        ->prepare('DELETE FROM comments WHERE `user`=:user AND `ticket`=:ticket')
+                        ->execute([':ticket' => $ticket['aid'],':user' => $_SESSION['id']]);
+                    $isUpvoter = false;
+                } else {
+                    $this->database
+                        ->prepare('INSERT INTO comments (`user`,`ticket`) VALUES (:user,:ticket)')
+                        ->execute([':ticket' => $ticket['aid'],':user' => $_SESSION['id']]);
+                    $isUpvoter = true;
                 }
                 $wasModified=true;
             } elseif($isContributor && isset($post['duration']) && isset($post['task'])) {
@@ -119,6 +136,22 @@ class Ticket
         foreach ($this->database->query("SELECT * FROM stati")->fetchAll(PDO::FETCH_ASSOC) as $status) {
             $stati[$status['aid']] = $status;
         }
-        return $this->twig->render('ticket', ['title' => $ticket['title'], 'stati' => $stati, 'isContributor' => $isContributor, 'times' => $times, 'users' => $users, 'project' => $project, 'ticket' => $ticket, 'comments' => $comments]);
+        $stmt = $this->database->prepare('SELECT COUNT(*) FROM upvotes WHERE ticket=:ticket');
+        $stmt->execute([':ticket' => $ticket['aid']]);
+        return $this->twig->render(
+            'ticket',
+            [
+                'title' => $ticket['title'],
+                'stati' => $stati,
+                'isContributor' => $isContributor,
+                'times' => $times,
+                'users' => $users,
+                'project' => $project,
+                'ticket' => $ticket,
+                'comments' => $comments,
+                'upvotes' => intval($stmt->fetchColumn()),
+                'isUpvoter' => $isUpvoter,
+            ]
+        );
     }
 }
