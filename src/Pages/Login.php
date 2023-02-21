@@ -77,6 +77,7 @@ class Login
                 ['oneTime' => $oneTime, 'name' => $post['display']]
             );
             $mailer->SMTPAuth = true;
+            $mailer->SMTPDebug = \PHPMailer\PHPMailer\SMTP::DEBUG_LOWLEVEL;
             if (!$mailer->smtpConnect()) {
                 error_log('Mailer failed smtp connect.');
                 return $this->twig->render('login-sent-failed', ['title' => 'Login']);
