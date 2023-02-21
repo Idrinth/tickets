@@ -25,6 +25,9 @@ class MailLogin
             header('Location: /', true, 303);
             return;
         }
+        $this->database
+            ->prepare('UPDATE `users` SET mail_valid=1 WHERE aid=:id')
+            ->execute([':id' => $id]);
         $_SESSION['id'] = $id;
         header('Location: /', true, 303);
         return;

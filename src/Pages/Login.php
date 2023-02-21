@@ -46,9 +46,22 @@ class Login
                 if ($date !== null && strtotime($date) > time()) {
                     return $this->twig->render('login-sent-too-early', ['title' => 'Login']);
                 }
-                $this->database
-                    ->prepare('UPDATE `users` SET `email`=:mail,`password`=:password,`valid_until`=:valid_until WHERE aid=:aid')
-                    ->execute([':aid' => $id,':mail' => $post['mail'],':password' => $oneTime, ':valid_until' => date('Y-m-d H:i:s', time()+3600)]);
+                $stmt = $this->database->prepare('SELECT email,mail_valid FROM `users` WHERE aid=:id');
+                $stmt->execute([':id' => $id]);
+                $data = $stmt->fetch(PDO::FETCH_ASSOC);
+                if ($data['mail_valid'] === '1' && $data['email'] !== $post['mail']) {
+                    $this->database
+                        ->prepare('INSERT INTO `users` (`display`,`email`,`password`,`valid_until`) VALUES (:display,:email,:password,:valid_until)')
+                        ->execute([':display' => $post['display'],':email' => $post['mail'],':password' => $oneTime, ':valid_until' => date('Y-m-d H:i:s', time()+3600)]);
+                } elseif ($data['mail_valid'] === '1') {
+                    $this->database
+                        ->prepare('UPDATE `users` SET `password`=:password,`valid_until`=:valid_until WHERE aid=:aid')
+                        ->execute([':aid' => $id,':password' => $oneTime, ':valid_until' => date('Y-m-d H:i:s', time()+3600)]);
+                } else {
+                    $this->database
+                        ->prepare('UPDATE `users` SET `email`=:mail,`password`=:password,`valid_until`=:valid_until WHERE aid=:aid')
+                        ->execute([':aid' => $id,':mail' => $post['mail'],':password' => $oneTime, ':valid_until' => date('Y-m-d H:i:s', time()+3600)]);
+                }
             }
             $mailer = new PHPMailer();
             $mailer->setFrom('ticket@idrinth.de', 'Idrinth\'s Tickets (idrinth)');
