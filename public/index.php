@@ -6,6 +6,7 @@ use De\Idrinth\Tickets\Pages\DiscordLogin;
 use De\Idrinth\Tickets\Pages\Home;
 use De\Idrinth\Tickets\Pages\Imprint;
 use De\Idrinth\Tickets\Pages\Login;
+use De\Idrinth\Tickets\Pages\MailLogin;
 use De\Idrinth\Tickets\Pages\NewTicket;
 use De\Idrinth\Tickets\Pages\Project;
 use De\Idrinth\Tickets\Pages\Ticket;
@@ -22,6 +23,7 @@ require dirname(__DIR__) . '/vendor/autoload.php';
     ->get('/api/notifications', Notification::class)
     ->get('/imprint', Imprint::class)
     ->get('/discord-login', DiscordLogin::class)
+    ->get('/mail-login/{key:[a-z0-9A-Z]+}', MailLogin::class)
     ->get('/login', Login::class)
     ->post('/login', Login::class)
     ->get('/post', Login::class)
