@@ -74,6 +74,7 @@ class Login
             $mailer->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mailer->Timeout = 60;
             $mailer->isHTML(true);
+            $mailer->Mailer ='smtp';
             $mailer->Body = $this->twig->render(
                 'login-mail',
                 ['oneTime' => $oneTime, 'name' => $post['display']]
