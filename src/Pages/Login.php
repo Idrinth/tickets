@@ -71,6 +71,7 @@ class Login
             $mailer->Password = $_ENV['MAIL_PASSWORD'];
             $mailer->Port = intval($_ENV['MAIL_PORT_SMTP'], 10);
             $mailer->CharSet = 'utf-8';
+            $mailer->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mailer->Timeout = 60;
             $mailer->isHTML(true);
             $mailer->Body = $this->twig->render(
