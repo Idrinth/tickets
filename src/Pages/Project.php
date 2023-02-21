@@ -51,13 +51,13 @@ class Project
             }
         }
         usort($newTickets, function(array $t1, array $t2) {
-            return $t1['upvotes'] - $t2['upvotes'];
+            return $t2['upvotes'] - $t1['upvotes'];
         });
         usort($wipTickets, function(array $t1, array $t2) {
-            return $t1['upvotes'] - $t2['upvotes'];
+            return $t2['upvotes'] - $t1['upvotes'];
         });
         usort($doneTickets, function(array $t1, array $t2) {
-            return $t1['upvotes'] - $t2['upvotes'];
+            return $t2['upvotes'] - $t1['upvotes'];
         });
         return $this->twig->render('project', ['title' => $project['name'], 'project' => $project, 'newTickets' => $newTickets, 'wipTickets' => $wipTickets, 'doneTickets' => $doneTickets]);
     }
