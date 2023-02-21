@@ -59,9 +59,17 @@ class Login
             $mailer->Port = intval($_ENV['MAIL_PORT_SMTP'], 10);
             $mailer->CharSet = 'utf-8';
             $mailer->isHTML(true);
-            $mailer->Body = $this->twig->render('login-mail',['oneTime' => $oneTime, 'name' => $post['display']]);
+            $mailer->Body = $this->twig->render(
+                'login-mail',
+                ['oneTime' => $oneTime, 'name' => $post['display']]
+            );
             $mailer->SMTPAuth = true;
-            if (!$mailer->smtpConnect() || !$mailer->send()) {
+            if (!$mailer->smtpConnect()) {
+                error_log('Mailer failed smtp connect.');
+                return $this->twig->render('login-sent-failed', ['title' => 'Login']);
+            }
+            if (!$mailer->send()) {
+                error_log('Mailer failed sending mail.');
                 return $this->twig->render('login-sent-failed', ['title' => 'Login']);
             }
             return $this->twig->render('login-sent', ['title' => 'Login']);
