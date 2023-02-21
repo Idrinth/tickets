@@ -73,12 +73,12 @@ class Ticket
             } elseif (isset($post['vote'])) {
                 if ($isUpvoter) {
                     $this->database
-                        ->prepare('DELETE FROM comments WHERE `user`=:user AND `ticket`=:ticket')
+                        ->prepare('DELETE FROM upvotes WHERE `user`=:user AND `ticket`=:ticket')
                         ->execute([':ticket' => $ticket['aid'],':user' => $_SESSION['id']]);
                     $isUpvoter = false;
                 } else {
                     $this->database
-                        ->prepare('INSERT INTO comments (`user`,`ticket`) VALUES (:user,:ticket)')
+                        ->prepare('INSERT INTO upvotes (`user`,`ticket`) VALUES (:user,:ticket)')
                         ->execute([':ticket' => $ticket['aid'],':user' => $_SESSION['id']]);
                     $isUpvoter = true;
                 }
@@ -149,7 +149,7 @@ class Ticket
                 'project' => $project,
                 'ticket' => $ticket,
                 'comments' => $comments,
-                'upvotes' => intval($stmt->fetchColumn()),
+                'upvotes' => intval($stmt->fetchColumn(), 10),
                 'isUpvoter' => $isUpvoter,
             ]
         );
