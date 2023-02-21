@@ -40,6 +40,12 @@ class Login
                     ->prepare('INSERT INTO `users` (`display`,`email`,`password`,`valid_until`) VALUES (:display,:email,:password,:valid_until)')
                     ->execute([':display' => $post['display'],':email' => $post['mail'],':password' => $oneTime, ':valid_until' => date('Y-m-d H:i:s', time()+3600)]);
             } else {
+                $stmt = $this->database->prepare('SELECT valid_until FROM `users` WHERE aid=:id');
+                $stmt->execute([':id' => $id]);
+                $date = $stmt->fetchColumn();
+                if ($date !== null && strtotime($date) > time()) {
+                    return $this->twig->render('login-sent-too-early', ['title' => 'Login']);
+                }
                 $this->database
                     ->prepare('UPDATE `users` SET `email`=:mail,`password`=:password,`valid_until`=:valid_until WHERE aid=:aid')
                     ->execute([':aid' => $id,':mail' => $post['mail'],':password' => $oneTime, ':valid_until' => date('Y-m-d H:i:s', time()+3600)]);
@@ -51,14 +57,9 @@ class Login
             $mailer->Username = $_ENV['MAIL_USER'];
             $mailer->Password = $_ENV['MAIL_PASSWORD'];
             $mailer->Port = intval($_ENV['MAIL_PORT_SMTP'], 10);
+            $mailer->CharSet = 'utf-8';
             $mailer->isHTML(true);
-            $mailer->Body = "<p>If you didn't plan to login, just ignore this mail.</p>"
-                    . "<p>Otherwise go to <a href=\"https://tickets.idrinth.de/email-login/$oneTime\">the login</a>.</p>"
-                    . "<p>The site is hosted and operated by Björn 'Idrinth' Büttner, see the <a href=\"https://tickets.idrinth.de/imprint\">imprint</a> for more information.</p>";
-            $mailer->AltBody = "If you didn't plan to login, just ignore this mail.\n"
-                    . "Otherwise go to the login at https://tickets.idrinth.de/email-login/$oneTime\n"
-                    . "The site is hosted and operated by Björn 'Idrinth' Büttner, see the imprint at https://tickets.idrinth.de/imprint for more information.";
-            $mailer->Subject = 'Login-Request on tickets.idrinth.de';
+            $mailer->Body = $this->twig->render('login-mail',['oneTime' => $oneTime, 'name' => $post['display']]);
             $mailer->SMTPAuth = true;
             if (!$mailer->smtpConnect() || !$mailer->send()) {
                 return $this->twig->render('login-sent-failed', ['title' => 'Login']);
