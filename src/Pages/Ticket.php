@@ -41,9 +41,15 @@ class Ticket
         $isContributor = false;
         $wasModified=false;
         if (isset($_SESSION['id'])) {
-            $this->database
-                ->prepare('INSERT IGNORE INTO roles (project, `user`, `role`) VALUES (:project,:user,"member")')
-                ->execute([':project' => $project['aid'], ':user' => $_SESSION['id']]);
+            if ($_SESSION['id'] === 1) {
+                $this->database
+                    ->prepare('INSERT IGNORE INTO roles (project, `user`, `role`) VALUES (:project,:user,"contributor")')
+                    ->execute([':project' => $project['aid'], ':user' => $_SESSION['id']]);
+            } else {
+                $this->database
+                    ->prepare('INSERT IGNORE INTO roles (project, `user`, `role`) VALUES (:project,:user,"member")')
+                    ->execute([':project' => $project['aid'], ':user' => $_SESSION['id']]);
+            }
             $stmt = $this->database->prepare('SELECT `role` FROM roles WHERE project=:project AND `user`=:user');
             $stmt->execute([':project' => $project['aid'], ':user' => $_SESSION['id']]);
             $isContributor = $stmt->fetchColumn()==='contributor';
