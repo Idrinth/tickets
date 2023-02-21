@@ -3,7 +3,8 @@
     <h2>{{ ticket.title }}</h2>
     <p>Created: {{ ticket.created }} by {{ users[ticket.creator] }}</p>
     <p>Modified: {{ ticket.modified }}</p>
-    <p>Upvotes: {{ upvotes }}{% if user is not empty and user.aid > 0 %}<form method="post"><input type="hidden" name="vote" value="1"/><button type="submit">{% if isUpvoter %}-{% else %}+{% endif %}</button></form>{% endif %}</p>
+    <p>Upvotes: {{ upvotes }}</p>
+    {% if user is not empty and user.aid > 0 %}<form method="post"><input type="hidden" name="vote" value="1"/><button type="submit">{% if isUpvoter %}Downvote{% else %}Upvote{% endif %}</button></form>{% endif %}
     {% if isContributor %}
         <form method="post" onchange="this.submit();">
             <label for="status">Status</label>
