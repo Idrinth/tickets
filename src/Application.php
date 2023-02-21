@@ -22,6 +22,7 @@ class Application
         ini_set('session.gc_maxlifetime', self::LIFETIME);
         session_set_cookie_params(self::LIFETIME, '/', 'tickets.idrinth.de', true, true);
         session_start();
+        $_SESSION['_last'] = time();
     }
 
     public function register(object $singleton): self
