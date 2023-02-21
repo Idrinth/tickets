@@ -17,6 +17,15 @@
   display: block;
   position:absolute;
   background: #111;
+  width: auto;
+  margin: 0;
+  padding: 0;
+}
+#nav > nav > ul > li > ul > li {
+  display: block;
+  width: auto;
+  padding: 0.25em;
+  margin: 0;
 }
 #nav {
   background: black;
