@@ -28,6 +28,7 @@ class Login
     public function run($post)
     {
         if (isset($post['mail']) && isset($post['display'])) {
+            return $this->twig->render('login-sent-failed', ['title' => 'Login']);
             $oneTime = $this->makeOneTimePass();
             $stmt = $this->database->prepare('SELECT aid FROM `users` WHERE email=:email');
             $stmt->execute([':email' => $post['mail']]);
