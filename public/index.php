@@ -23,7 +23,7 @@ require dirname(__DIR__) . '/vendor/autoload.php';
     ->get('/api/notifications', Notification::class)
     ->get('/imprint', Imprint::class)
     ->get('/discord-login', DiscordLogin::class)
-    ->get('/mail-login/{key:[a-z0-9A-Z]+}', MailLogin::class)
+    ->get('/email-login/{key:[a-z0-9A-Z]+}', MailLogin::class)
     ->get('/login', Login::class)
     ->post('/login', Login::class)
     ->get('/post', Login::class)
