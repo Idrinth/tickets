@@ -86,7 +86,7 @@ class Ticket
             } elseif($isContributor && isset($post['duration']) && isset($post['task'])) {
                 $time = (intval(explode(':', $post['duration'])[0], 10) * 60 + intval(explode(':', $post['duration'])[1], 10)) * 60;
                 $this->database
-                    ->prepare('INSERT INTO times (`user`,`ticket`,`day`,`duration`,`status`) VALUES (:user,:ticket,:day,:duration,:status)')
+                    ->prepare('INSERT INTO times (`user`,`ticket`,`day`,`duration`,`status`) VALUES (:user,:ticket,:day,:duration,:status) ON DUPLICATE KEY UPDATE `duration`=`duration`+:duration')
                     ->execute([':user' => $_SESSION['id'],':ticket' => $ticket['aid'],':day' => date('Y-m-d'),':duration' => $time,':status' => $post['task']]);
                 $stmt = $this->database->prepare('SELECT `user` FROM watchers WHERE ticket=:ticket');
                 $stmt->execute([':ticket' => $ticket['aid']]);

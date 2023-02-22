@@ -40,7 +40,7 @@
     {% endautoescape %}</div>
     <ul>
     {% for time in times %}
-        <li>On {{ time.day}} {{ users[time.user] }} {{ time.name }} for {{ time.duration | date('H:i') }}</li>
+        <li>On {{ time.day}} {{ users[time.user] }}: {{ time.name }} for {{ time.duration | date('H:i') }}</li>
     {% endfor %}
     {% if isContributor %}
     <li>
