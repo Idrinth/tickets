@@ -13,9 +13,9 @@
         {% for ts in times %}
             <tr>
                 <th>{{ ts.day }}</th>
-                <th>{{ ts.duration | date('H:i') }}</th>
-                <th>{{ ts.user }}</th>
-                <th>{{ ts.project }}</th>
+                <td>{{ ts.duration | date('H:i') }}</td>
+                <td>{{ ts.user }}</td>
+                <td>{{ ts.project }}</td>
             </tr>
         {% endfor %}
     </tbody>
