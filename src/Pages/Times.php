@@ -13,13 +13,10 @@ class Times
     public function __construct(PDO $database, Twig $twig)
     {
         $this->database = $database;
+        $this->twig = $twig;
     }
     public function run(array $post)
     {
-        if (($_SESSION['id'] ?? 0) === 0) {
-            header('Location: /', true, 303);
-            return;
-        }
         $stmt = $this->database->prepare('SELECT `times`.`day`,SUM(`times`.`duration`) AS `duration`,`stati`.`name` AS `status`,`users`.`display` AS `user`,`projects`.`name` AS `project`
 FROM `times`
 INNER JOIN `users` ON `users`.`aid`=`times`.`user`
