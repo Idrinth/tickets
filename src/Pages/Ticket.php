@@ -93,7 +93,7 @@ class Ticket
                 foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $watcher) {
                     $this->database
                         ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
-                        ->execute([':url' => "/{$project['slug']}/{$ticket['slug']}#c{$comment}", ':user' => $watcher['user'],':ticket' => $ticket['aid'], ':content' => 'Time was tracked.']);
+                        ->execute([':url' => "/{$project['slug']}/{$ticket['slug']}", ':user' => $watcher['user'],':ticket' => $ticket['aid'], ':content' => 'Time was tracked.']);
                 }
                 $wasModified=true;
             } elseif($isContributor && isset($post['status'])) {
@@ -105,7 +105,7 @@ class Ticket
                 foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $watcher) {
                     $this->database
                         ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
-                        ->execute([':url' => "/{$project['slug']}/{$ticket['slug']}#c{$comment}", ':user' => $watcher['user'],':ticket' => $ticket['aid'], ':content' => 'Status was changed.']);
+                        ->execute([':url' => "/{$project['slug']}/{$ticket['slug']}", ':user' => $watcher['user'],':ticket' => $ticket['aid'], ':content' => 'Status was changed.']);
                 }
                 $wasModified=true;
             }
