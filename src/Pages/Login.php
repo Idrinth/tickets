@@ -75,6 +75,7 @@ class Login
             $mailer->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mailer->Timeout = 60;
             $mailer->isHTML(true);
+            $mailer->addCustomHeader('Return-Path', 'webmaster@idrinth.de');
             $mailer->Mailer ='smtp';
             $mailer->Subject = 'Login Request at ticket.idrinth.de';
             $mailer->Body = $this->twig->render(
