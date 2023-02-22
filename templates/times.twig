@@ -1,0 +1,23 @@
+{% include 'header.twig' %}
+<h1>Time Spent</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Day</th>
+            <th>Duration</th>
+            <th>User</th>
+            <th>Project</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ts in times %}
+            <tr>
+                <th>{{ ts.day }}</th>
+                <th>{{ ts.duration | date('H:i') }}</th>
+                <th>{{ ts.user }}</th>
+                <th>{{ ts.project }}</th>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% include 'footer.twig' %}

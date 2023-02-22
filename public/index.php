@@ -10,6 +10,7 @@ use De\Idrinth\Tickets\Pages\MailLogin;
 use De\Idrinth\Tickets\Pages\NewTicket;
 use De\Idrinth\Tickets\Pages\Project;
 use De\Idrinth\Tickets\Pages\Ticket;
+use De\Idrinth\Tickets\Pages\Times;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
@@ -27,6 +28,7 @@ require dirname(__DIR__) . '/vendor/autoload.php';
     ->get('/login', Login::class)
     ->post('/login', Login::class)
     ->get('/post', Login::class)
+    ->get('/times', Times::class)
     ->get('/new', NewTicket::class)
     ->post('/new', NewTicket::class)
     ->get('/{project:[a-z-]+}', Project::class)
