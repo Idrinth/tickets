@@ -18,7 +18,7 @@ class Notification
         if (!isset($_SESSION['id'])) {
             return '[]';
         }
-        $stmt = $this->database->prepare('SELECT * FROM notifications WHERE `user`=:user AND `read` IS NULL');
+        $stmt = $this->database->prepare('SELECT created,content,url FROM notifications WHERE `user`=:user AND `read` IS NULL');
         $stmt->execute([':user' => $_SESSION['id']]);
         return json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
     }
