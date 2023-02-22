@@ -69,6 +69,9 @@ class Ticket
                         ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
                         ->execute([':url' => "/{$project['slug']}/{$ticket['slug']}#c{$comment}", ':user' => $watcher['user'],':ticket' => $ticket['aid'], ':content' => 'A new comment was written.']);
                 }
+                $this->database
+                    ->prepare('INSERT IGNORE INTO watchers (ticket, `user`) VALUES (:id, :user)')
+                    ->execute([':id' => $ticket['aid'], ':user' => $_SESSION['id']]);
                 $wasModified=true;
             } elseif (isset($post['vote'])) {
                 if ($isUpvoter) {
@@ -83,6 +86,10 @@ class Ticket
                     $isUpvoter = true;
                 }
                 $wasModified=true;
+            }elseif (isset($post['watch'])) {
+                $this->database
+                    ->prepare('INSERT IGNORE INTO watchers (ticket, `user`) VALUES (:id, :user)')
+                    ->execute([':id' => $ticket['aid'], ':user' => $_SESSION['id']]);
             } elseif($isContributor && isset($post['duration']) && isset($post['task'])) {
                 $time = (intval(explode(':', $post['duration'])[0], 10) * 60 + intval(explode(':', $post['duration'])[1], 10)) * 60;
                 $this->database
@@ -91,10 +98,15 @@ class Ticket
                 $stmt = $this->database->prepare('SELECT `user` FROM watchers WHERE ticket=:ticket');
                 $stmt->execute([':ticket' => $ticket['aid']]);
                 foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $watcher) {
-                    $this->database
-                        ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
-                        ->execute([':url' => "/{$project['slug']}/{$ticket['slug']}", ':user' => $watcher['user'],':ticket' => $ticket['aid'], ':content' => 'Time was tracked.']);
+                    if (intval($watcher['user']) !== $_SESSION['id']) {
+                        $this->database
+                            ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
+                            ->execute([':url' => "/{$project['slug']}/{$ticket['slug']}", ':user' => $watcher['user'],':ticket' => $ticket['aid'], ':content' => 'Time was tracked.']);
+                    }
                 }
+                $this->database
+                    ->prepare('INSERT IGNORE INTO watchers (ticket, `user`) VALUES (:id, :user)')
+                    ->execute([':id' => $ticket['aid'], ':user' => $_SESSION['id']]);
                 $wasModified=true;
             } elseif($isContributor && isset($post['status'])) {
                 $this->database
@@ -103,10 +115,15 @@ class Ticket
                 $stmt = $this->database->prepare('SELECT `user` FROM watchers WHERE ticket=:ticket');
                 $stmt->execute([':ticket' => $ticket['aid']]);
                 foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $watcher) {
-                    $this->database
-                        ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
-                        ->execute([':url' => "/{$project['slug']}/{$ticket['slug']}", ':user' => $watcher['user'],':ticket' => $ticket['aid'], ':content' => 'Status was changed.']);
+                    if (intval($watcher['user']) !== $_SESSION['id']) {
+                        $this->database
+                            ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
+                            ->execute([':url' => "/{$project['slug']}/{$ticket['slug']}", ':user' => $watcher['user'],':ticket' => $ticket['aid'], ':content' => 'Status was changed.']);
+                    }
                 }
+                $this->database
+                    ->prepare('INSERT IGNORE INTO watchers (ticket, `user`) VALUES (:id, :user)')
+                    ->execute([':id' => $ticket['aid'], ':user' => $_SESSION['id']]);
                 $wasModified=true;
             }
             if ($wasModified) {
@@ -139,6 +156,8 @@ class Ticket
         }
         $stmt = $this->database->prepare('SELECT COUNT(*) FROM upvotes WHERE ticket=:ticket');
         $stmt->execute([':ticket' => $ticket['aid']]);
+        $stmt2 = $this->database->prepare('SELECT `user` FROM watchers WHERE ticket=:ticket');
+        $stmt2->execute([':ticket' => $ticket['aid']]);
         return $this->twig->render(
             'ticket',
             [
@@ -152,6 +171,7 @@ class Ticket
                 'comments' => $comments,
                 'upvotes' => intval($stmt->fetchColumn(), 10),
                 'isUpvoter' => $isUpvoter,
+                'watchers' => $stmt2->fetchAll(PDO::FETCH_ASSOC),
             ]
         );
     }
