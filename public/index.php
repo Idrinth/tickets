@@ -21,7 +21,6 @@ require dirname(__DIR__) . '/vendor/autoload.php';
     ->register(new PDO('mysql:host=' . $_ENV['DATABASE_HOST'] . ';dbname=' . $_ENV['DATABASE_DATABASE'], $_ENV['DATABASE_USER'], $_ENV['DATABASE_PASSWORD']))
     ->register(new Environment(new FilesystemLoader(dirname(__DIR__) . '/templates')))
     ->register(new Parsedown())
-    ->register(new Mailer())
     ->get('/', Home::class)
     ->get('/api/notifications', Notification::class)
     ->get('/imprint', Imprint::class)
