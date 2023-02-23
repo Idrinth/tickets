@@ -59,7 +59,7 @@ class Application
     }
     private function init(ReflectionClass $class): object
     {
-        if (isset($this->singletons[$class->getName()])) {
+        if (!isset($this->singletons[$class->getName()])) {
             $args = [];
             $constructor = $class->getConstructor();
             if ($constructor instanceof ReflectionMethod) {
