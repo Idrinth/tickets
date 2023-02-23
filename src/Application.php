@@ -28,9 +28,9 @@ class Application
     public function register(object $singleton): self
     {
         $rf = new ReflectionClass($singleton);
-        $this->singletons[$rf->getNamespaceName()] = $singleton;
+        $this->singletons[$rf->getName()] = $singleton;
         while ($rf = $rf->getParentClass()) {
-            $this->singletons[$rf->getNamespaceName()] = $singleton;
+            $this->singletons[$rf->getName()] = $singleton;
         }
         return $this;
     }
@@ -52,9 +52,10 @@ class Application
     }
     private function init(ReflectionClass $class): object
     {
-        if (isset($this->singletons[$class->getNamespaceName()])) {
-            return $this->singletons[$class->getNamespaceName()];
+        if (isset($this->singletons[$class->getName()])) {
+            return $this->singletons[$class->getName()];
         }
+        var_dump($this->singletons, $class->getName());
         $args = [];
         $constructor = $class->getConstructor();
         if ($constructor instanceof ReflectionMethod) {
@@ -62,7 +63,7 @@ class Application
                 $args[] = $this->init($parameter->getClass());
             }
         }
-        $handler = $class->getNamespaceName();
+        $handler = $class->getName();
         return new $handler(...$args);
     }
     public function run(): void
