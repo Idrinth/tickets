@@ -23,7 +23,7 @@ class Profile
         }
         if (isset($post['display']) && isset($post['enable_mail_update']) && isset($post['enable_discord_update'])) {
             $this->database
-                ->prepare('UPDATE `users` SET `display`=:display,`enable_mail_update`=:enable_mail_update,`enable_discord_update`:enable_discord_update WHERE aid=:id')
+                ->prepare('UPDATE `users` SET `display`=:display,`enable_mail_update`=:enable_mail_update,`enable_discord_update`=:enable_discord_update WHERE aid=:id')
                 ->execute([':id' => $_SESSION['id'], ':display' => $post['display'], ':enable_mail_update' => $post['enable_mail_update'], ':enable_discord_update' => $post['enable_discord_update']]);
         }
         $stmt = $this->database->prepare('SELECT * FROM users WHERE aid=:aid');
