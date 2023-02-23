@@ -5,6 +5,8 @@
     <input type="text" value="{{ user.display }}" name="display" id="display" required/>
     <label for="email">Your eMail</label>
     <input type="email" disabled value="{{ user.email }}" id="email"/>
+    <label for="discord">Mail validated?</label>
+    <input type="checkbox" disabled {% if user.mail_valid == '1' %}checked{% endif %} id="mail_valid"/>
     <label for="discord">Enable Discord Updates</label>
     <input type="hidden" value="0" name="enable_discord_update"/>
     <input type="checkbox" value="1" {% if user.enable_discord_update == '1' %}checked{% endif %} name="enable_discord_update" id="enable_discord_update"/>
