@@ -52,12 +52,14 @@ class Application
     }
     private function init(ReflectionClass $class): object
     {
-        var_dump($class->name);
+        if (isset($this->singletons[$class->name])) {
+            return $this->singletons[$class->name];
+        }
         $args = [];
         $constructor = $class->getConstructor();
         if ($constructor instanceof ReflectionMethod) {
             foreach ($constructor->getParameters() as $parameter) {
-                $args[] = $this->singletons[$parameter->getType()->getName()] ?? $this->init($parameter->getClass());
+                $args[] = $this->init($parameter->getClass());
             }
         }
         $handler = $class->name;
