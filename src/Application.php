@@ -8,6 +8,7 @@ use FastRoute\RouteCollector;
 use ReflectionClass;
 use ReflectionMethod;
 use Throwable;
+use UnexpectedValueException;
 use function FastRoute\simpleDispatcher;
 
 class Application
