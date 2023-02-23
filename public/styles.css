@@ -62,10 +62,10 @@ h1,h2,h3,h4,h5 {
   background: #fdd;
 }
 .ticket.service {
-  background: #dfd;
+  background: #ddf;
 }
 .ticket.feature {
-  background: #ddf;
+  background: #dfd;
 }
 .board {
   display: flex;
