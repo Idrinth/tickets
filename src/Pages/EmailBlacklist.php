@@ -24,9 +24,9 @@ class EmailBlacklist
                 $this->database
                     ->prepare('INSERT IGNORE INTO email_blacklist (email) VALUES (:email)')
                     ->execute([':email' => $row['email']]);
-                return $this->twig->render('blacklist-success', ['user' => $row]);
+                return $this->twig->render('blacklist-success', ['title' => 'Blacklisting', 'blacklisted_user' => $row]);
             }
         }
-        return $this->twig->render('blacklist-failure', ['email' => $_ENV['MAIL_FROM_MAIL']]);
+        return $this->twig->render('blacklist-failure', ['title' => 'Blacklisting', 'email' => $_ENV['MAIL_FROM_MAIL']]);
     }
 }
