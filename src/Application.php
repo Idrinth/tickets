@@ -63,11 +63,17 @@ class Application
             $constructor = $class->getConstructor();
             if ($constructor instanceof ReflectionMethod) {
                 foreach ($constructor->getParameters() as $parameter) {
+                    if ($parameter->isOptional()) {
+                        break;
+                    }
                     $args[] = $this->init($parameter->getClass());
                 }
             }
             $handler = $class->getName();
             $this->register(new $handler(...$args));
+        }
+        if (!isset($this->singletons[$class->getName()])) {
+            throw new UnexpectedValueException("Couldn'find {$class->getName()} in " . implode(',', array_keys($this->singletons)));
         }
         return $this->singletons[$class->getName()];
     }
