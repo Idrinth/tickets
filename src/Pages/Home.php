@@ -22,11 +22,14 @@ class Home
         $wipTickets = [];
         $doneTickets = [];
         foreach ($tickets as &$ticket) {
+            $stmt = $this->database->prepare('SELECT * FROM projects WHERE aid=:aid');
+            $stmt->execute([':aid' => $ticket['project']]);
+            $ticket['project'] = $stmt->fetch(PDO::FETCH_ASSOC);
             if ($ticket['project']['limited_access'] === '1' && !isset($_SESSION['id'])) {
                 continue;
             } elseif ($ticket['project']['limited_access'] === '1' && $ticket['creator'] != $_SESSION['id']) {
                 $stmt = $this->database->prepare('SELECT 1 FROM roles WHERE role="contributor" AND project=:project AND `user`=:user');
-                $stmt->execute([':user' => $_SESSION['id'], ':project' => $ticket['project']]);
+                $stmt->execute([':user' => $_SESSION['id'], ':project' => $ticket['project']['aid']]);
                 if ($stmt->fetchColumn() !== '1') {
                     continue;
                 }
@@ -37,9 +40,6 @@ class Home
             $stmt = $this->database->prepare('SELECT * FROM users WHERE aid=:aid');
             $stmt->execute([':aid' => $ticket['creator']]);
             $ticket['creator'] = $stmt->fetch(PDO::FETCH_ASSOC);
-            $stmt = $this->database->prepare('SELECT * FROM projects WHERE aid=:aid');
-            $stmt->execute([':aid' => $ticket['project']]);
-            $ticket['project'] = $stmt->fetch(PDO::FETCH_ASSOC);
             $stmt = $this->database->prepare('SELECT COUNT(*) FROM upvotes WHERE ticket=:aid');
             $stmt->execute([':aid' => $ticket['aid']]);
             $ticket['upvotes'] = $stmt->fetchColumn();
