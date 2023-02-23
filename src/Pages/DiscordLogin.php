@@ -21,7 +21,7 @@ class DiscordLogin
         $provider = new Discord([
             'clientId' => $_ENV['DISCORD_CLIENT_ID'],
             'clientSecret' => $_ENV['DISCORD_CLIENT_SECRET'],
-            'redirectUri' => 'https://tickets.idrinth.de/discord-login'
+            'redirectUri' => "https://{$_ENV['SYSTEM_HOSTNAME']}/discord-login"
         ]);
         if (!isset($_GET['code'])) {
             $authUrl = $provider->getAuthorizationUrl(['scope' => 'identify']);

@@ -4,16 +4,18 @@ namespace De\Idrinth\Tickets\Pages;
 
 use De\Idrinth\Tickets\Twig;
 use PDO;
-use PHPMailer\PHPMailer\PHPMailer;
+use De\Idrinth\Tickets\Mailer;
 
 class Login
 {
     private Twig $twig;
     private PDO $database;
+    private Mailer $mailer;
 
-    public function __construct(Twig $twig, PDO $database)
+    public function __construct(Twig $twig, PDO $database, Mailer $mailer)
     {
         $this->twig = $twig;
+        $this->mailer = $mailer;
         $this->database = $database;
     }
     function makeOneTimePass(): string
@@ -64,31 +66,17 @@ class Login
                         ->execute([':aid' => $id,':mail' => $post['mail'],':password' => $oneTime, ':valid_until' => date('Y-m-d H:i:s', time()+3600)]);
                 }
             }
-            $mailer = new PHPMailer();
-            $mailer->setFrom('ticket@idrinth.de', 'Idrinth\'s Tickets (idrinth)');
-            $mailer->addAddress($post['mail'], $post['display']);
-            $mailer->Host = $_ENV['MAIL_HOST'];
-            $mailer->Username = $_ENV['MAIL_USER'];
-            $mailer->Password = $_ENV['MAIL_PASSWORD'];
-            $mailer->Port = intval($_ENV['MAIL_PORT_SMTP'], 10);
-            $mailer->CharSet = 'utf-8';
-            $mailer->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mailer->Timeout = 60;
-            $mailer->isHTML(true);
-            $mailer->addCustomHeader('Return-Path', 'webmaster@idrinth.de');
-            $mailer->Mailer ='smtp';
-            $mailer->Subject = 'Login Request at ticket.idrinth.de';
-            $mailer->Body = $this->twig->render(
+            if (!$this->mailer->send(
                 'login-mail',
-                ['oneTime' => $oneTime, 'name' => $post['display']]
-            );
-            $mailer->AltBody = strip_tags($mailer->Body);
-            $mailer->SMTPAuth = true;
-            if (!$mailer->smtpConnect()) {
-                error_log('Mailer failed smtp connect.');
-                return $this->twig->render('login-sent-failed', ['title' => 'Login']);
-            }
-            if (!$mailer->send()) {
+                [
+                    'oneTime' => $oneTime,
+                    'name' => $post['display'],
+                    'hostname' => $_ENV['SYSTEM_HOSTNAME'],
+                ],
+                'Login Request at ticket.idrinth.de',
+                $post['mail'],
+                $post['display']
+            )) {
                 error_log('Mailer failed sending mail.');
                 return $this->twig->render('login-sent-failed', ['title' => 'Login']);
             }
