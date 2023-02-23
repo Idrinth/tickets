@@ -4,6 +4,7 @@
 {% if project.github %}<p>On <a href="https://github.com/{{ project.github }}" target="_blank">Github</a></p>{% endif %}
 {% if project.url %}<p>Deployed to <a href="{{ project.url }}" target="_blank">live</a></p>{% endif %}
 <p>{{ project.description }}</p>
+{% if project.limited_access %}<p>This project only allows access to tickets created by you and to contributors.</p>{% elseif %}
 <div class="board">
     <div class="column">
         <h3>{{ newTickets | length }} New</h3>
