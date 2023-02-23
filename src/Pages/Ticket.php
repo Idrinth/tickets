@@ -41,8 +41,7 @@ class Ticket
         if ($project['limited_access'] === '1' && !isset($_SESSION['id'])) {
             header('Location: /' . $category, true, 303);
             return;
-        }
-        if ($project['limited_access'] === '1' && $ticket['creator'] != $_SESSION['id']) {
+        } elseif ($project['limited_access'] === '1' && $ticket['creator'] != $_SESSION['id']) {
             $stmt = $this->database->prepare('SELECT 1 FROM roles WHERE role="contributor" AND project=:project AND `user`=:user');
             $stmt->execute([':user' => $_SESSION['id'], ':project' => $ticket['project']]);
             if ($stmt->fetchColumn() !== '1') {

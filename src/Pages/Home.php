@@ -24,8 +24,7 @@ class Home
         foreach ($tickets as &$ticket) {
             if ($ticket['project']['limited_access'] === '1' && !isset($_SESSION['id'])) {
                 continue;
-            }
-            if ($ticket['project']['limited_access'] === '1' && $ticket['creator'] != $_SESSION['id']) {
+            } elseif ($ticket['project']['limited_access'] === '1' && $ticket['creator'] != $_SESSION['id']) {
                 $stmt = $this->database->prepare('SELECT 1 FROM roles WHERE role="contributor" AND project=:project AND `user`=:user');
                 $stmt->execute([':user' => $_SESSION['id'], ':project' => $ticket['project']]);
                 if ($stmt->fetchColumn() !== '1') {
