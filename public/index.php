@@ -8,6 +8,7 @@ use De\Idrinth\Tickets\Pages\Imprint;
 use De\Idrinth\Tickets\Pages\Login;
 use De\Idrinth\Tickets\Pages\MailLogin;
 use De\Idrinth\Tickets\Pages\NewTicket;
+use De\Idrinth\Tickets\Pages\Profile;
 use De\Idrinth\Tickets\Pages\Project;
 use De\Idrinth\Tickets\Pages\Ticket;
 use De\Idrinth\Tickets\Pages\Times;
@@ -29,6 +30,8 @@ require dirname(__DIR__) . '/vendor/autoload.php';
     ->get('/times', Times::class)
     ->get('/new', NewTicket::class)
     ->post('/new', NewTicket::class)
+    ->get('/profile', Profile::class)
+    ->post('/profile', Profile::class)
     ->get('/{project:[a-z-]+}', Project::class)
     ->get('/{project:[a-z-]+}/{ticket:[a-z0-9]+}', Ticket::class)
     ->post('/{project:[a-z-]+}/{ticket:[a-z0-9]+}', Ticket::class)
