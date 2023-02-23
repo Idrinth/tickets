@@ -52,6 +52,7 @@ class Application
     }
     private function init(ReflectionClass $class): object
     {
+        var_dump($class->name);
         $args = [];
         $constructor = $class->getConstructor();
         if ($constructor instanceof ReflectionMethod) {
