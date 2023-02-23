@@ -29,8 +29,14 @@ class Application
     {
         $rf = new ReflectionClass($singleton);
         $this->singletons[$rf->getName()] = $singleton;
+        foreach ($rf->getInterfaces() as $interface) {
+            $this->singletons[$interface->getName()] = $singleton;
+        }
         while ($rf = $rf->getParentClass()) {
             $this->singletons[$rf->getName()] = $singleton;
+            foreach ($rf->getInterfaces() as $interface) {
+                $this->singletons[$interface->getName()] = $singleton;
+            }
         }
         return $this;
     }
