@@ -2,6 +2,9 @@
 
 namespace De\Idrinth\Tickets\Pages;
 
+use De\Idrinth\Tickets\Twig;
+use PDO;
+
 class Profile
 {
     private Twig $twig;
@@ -12,7 +15,7 @@ class Profile
         $this->twig = $twig;
         $this->database = $database;
     }
-    public function run($post, $slug)
+    public function run($post)
     {
         if (!isset($_SESSION['id'])) {
             header('Location: /login', true, 303);
