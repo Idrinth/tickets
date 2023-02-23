@@ -29,6 +29,16 @@ class Project
         $wipTickets = [];
         $doneTickets = [];
         foreach ($tickets as &$ticket) {
+            if ($project['limited_access'] === '1' && !isset($_SESSION['id'])) {
+                continue;
+            }
+            if ($project['limited_access'] === '1' && $ticket['creator'] != $_SESSION['id']) {
+                $stmt = $this->database->prepare('SELECT 1 FROM roles WHERE role="contributor" AND project=:project AND `user`=:user');
+                $stmt->execute([':user' => $_SESSION['id'], ':project' => $ticket['project']]);
+                if ($stmt->fetchColumn() !== '1') {
+                    continue;
+                }
+            }
             $stmt = $this->database->prepare('SELECT * FROM stati WHERE aid=:aid');
             $stmt->execute([':aid' => $ticket['status']]);
             $ticket['status'] = $stmt->fetch(PDO::FETCH_ASSOC);

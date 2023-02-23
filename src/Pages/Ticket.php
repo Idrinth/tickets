@@ -38,6 +38,18 @@ class Ticket
             header('Location: /' . $project . '/' . $ticket['slug'], true, 303);
             return;
         }
+        if ($project['limited_access'] === '1' && !isset($_SESSION['id'])) {
+            header('Location: /' . $category, true, 303);
+            return;
+        }
+        if ($project['limited_access'] === '1' && $ticket['creator'] != $_SESSION['id']) {
+            $stmt = $this->database->prepare('SELECT 1 FROM roles WHERE role="contributor" AND project=:project AND `user`=:user');
+            $stmt->execute([':user' => $_SESSION['id'], ':project' => $ticket['project']]);
+            if ($stmt->fetchColumn() !== '1') {
+                header('Location: /' . $category, true, 303);
+                return;
+            }
+        }
         $isContributor = false;
         $wasModified=false;
         $isUpvoter = false;
