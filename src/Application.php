@@ -53,18 +53,17 @@ class Application
     private function init(ReflectionClass $class): object
     {
         if (isset($this->singletons[$class->getName()])) {
-            return $this->singletons[$class->getName()];
-        }
-        var_dump($this->singletons, $class->getName());
-        $args = [];
-        $constructor = $class->getConstructor();
-        if ($constructor instanceof ReflectionMethod) {
-            foreach ($constructor->getParameters() as $parameter) {
-                $args[] = $this->init($parameter->getClass());
+            $args = [];
+            $constructor = $class->getConstructor();
+            if ($constructor instanceof ReflectionMethod) {
+                foreach ($constructor->getParameters() as $parameter) {
+                    $args[] = $this->init($parameter->getClass());
+                }
             }
+            $handler = $class->getName();
+            $this->register(new $handler(...$args));
         }
-        $handler = $class->getName();
-        return new $handler(...$args);
+        return $this->singletons[$class->getName()];
     }
     public function run(): void
     {
