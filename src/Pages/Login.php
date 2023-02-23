@@ -67,7 +67,7 @@ class Login
                 }
             }
             if (!$this->mailer->send(
-                'login-mail',
+                'login',
                 [
                     'oneTime' => $oneTime,
                     'name' => $post['display'],

@@ -30,11 +30,11 @@ class Mailer
         $mailer->Mailer ='smtp';
         $mailer->Subject = $subject;
         $mailer->Body = $this->twig->render(
-            "$template-html",
+            "mails/$template-html",
             $templateContext
         );
         $mailer->AltBody = $this->twig->render(
-            "$template-text",
+            "mails/$template-text",
             $templateContext
         );
         $mailer->SMTPAuth = true;

@@ -4,7 +4,9 @@
     <label for="display">Your Display Name</label>
     <input type="text" value="{{ user.display }}" name="display" id="display" required/>
     <label for="discord_name">Your Discord</label>
-    <input type="email" disabled value="{{ user.discord_name }}" id="discord_name"/>
+    <input type="text" disabled value="{{ user.discord_name }}" id="discord_name"/>
+    <label for="nexusmods">Your Nexusid</label>
+    <input type="number" disabled value="{{ user.nexusmods }}" id="nexusmods"/>
     <label for="email">Your eMail</label>
     <input type="email" disabled value="{{ user.email }}" id="email"/>
     <label for="discord">Mail validated?</label>
