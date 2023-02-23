@@ -44,7 +44,7 @@ class DiscordLogin
         $_SESSION['id'] = intval($stmt->fetchColumn(), 10);
         if ($_SESSION['id'] === 0) {
             $this->database
-                ->prepare("INSERT INTO users (discord, display) VALUES (:discordId, :display)")
+                ->prepare("INSERT INTO users (discord, display,discord_name) VALUES (:discordId, :display,:display)")
                 ->execute([
                     ':discordId' => $user->getId(),
                     ':display' => $user->getUsername() . '#' . $user->getDiscriminator(),
