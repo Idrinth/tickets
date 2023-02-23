@@ -125,14 +125,33 @@ class Ticket
                     ->prepare('INSERT IGNORE INTO watchers (ticket, `user`) VALUES (:id, :user)')
                     ->execute([':id' => $ticket['aid'], ':user' => $_SESSION['id']]);
                 $wasModified=true;
+            } elseif($isContributor && isset($post['project'])) {
+                $stmt = $this->database->prepare('SELECT * FROM projects WHERE slug=:slug');
+                $stmt->execute([':slug' => $post['project']]);
+                $project = $stmt->fetch(PDO::FETCH_ASSOC);
+                $this->database
+                    ->prepare('UPDATE tickets SET `project`=:project WHERE aid=:aid')
+                    ->execute([':project' => $project['aid'],':aid' => $ticket['aid']]);
+                $stmt = $this->database->prepare('SELECT `user` FROM watchers WHERE ticket=:ticket');
+                $stmt->execute([':ticket' => $ticket['aid']]);
+                foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $watcher) {
+                    if (intval($watcher['user']) !== $_SESSION['id']) {
+                        $this->database
+                            ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
+                            ->execute([':url' => "/{$project['slug']}/{$ticket['slug']}", ':user' => $watcher['user'],':ticket' => $ticket['aid'], ':content' => 'Project was changed.']);
+                    }
+                }
+                $this->database
+                    ->prepare('INSERT IGNORE INTO watchers (ticket, `user`) VALUES (:id, :user)')
+                    ->execute([':id' => $ticket['aid'], ':user' => $_SESSION['id']]);
+                $wasModified=true;
             }
             if ($wasModified) {
                 $this->database
                     ->prepare('UPDATE tickets SET modified=NOW() WHERE aid=:aid')
                     ->execute([':aid' => $ticket['aid']]);
-                $stmt = $this->database->prepare('SELECT * FROM tickets WHERE aid=:aid');
-                $stmt->execute([':aid' => $ticket['aid']]);
-                $ticket = $stmt->fetch(PDO::FETCH_ASSOC);
+                header('Location: /' . $project['slug'] . '/' . $ticket['slug'], true, 303);
+                return;
             }
             $this->database
                 ->prepare('UPDATE notifications SET `read`=NOW() WHERE `read` IS NULL AND `user`=:user AND ticket=:ticket')
