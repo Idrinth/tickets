@@ -3,6 +3,7 @@
 use De\Idrinth\Tickets\API\Notification;
 use De\Idrinth\Tickets\Application;
 use De\Idrinth\Tickets\Pages\DiscordLogin;
+use De\Idrinth\Tickets\Pages\EmailBlacklist;
 use De\Idrinth\Tickets\Pages\Home;
 use De\Idrinth\Tickets\Pages\Imprint;
 use De\Idrinth\Tickets\Pages\Login;
@@ -24,6 +25,7 @@ require dirname(__DIR__) . '/vendor/autoload.php';
     ->get('/imprint', Imprint::class)
     ->get('/discord-login', DiscordLogin::class)
     ->get('/email-login/{key:[a-z0-9A-Z]+}', MailLogin::class)
+    ->get('/email-blacklist/{key:[a-z0-9]+}', EmailBlacklist::class)
     ->get('/login', Login::class)
     ->post('/login', Login::class)
     ->get('/post', Login::class)

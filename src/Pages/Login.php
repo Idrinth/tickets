@@ -30,7 +30,6 @@ class Login
     public function run($post)
     {
         if (isset($post['mail']) && isset($post['display'])) {
-            #return $this->twig->render('login-sent-failed', ['title' => 'Login']);
             $oneTime = $this->makeOneTimePass();
             $stmt = $this->database->prepare('SELECT aid FROM `users` WHERE email=:email');
             $stmt->execute([':email' => $post['mail']]);
@@ -42,6 +41,7 @@ class Login
                 $this->database
                     ->prepare('INSERT INTO `users` (`display`,`email`,`password`,`valid_until`) VALUES (:display,:email,:password,:valid_until)')
                     ->execute([':display' => $post['display'],':email' => $post['mail'],':password' => $oneTime, ':valid_until' => date('Y-m-d H:i:s', time()+3600)]);
+                $id = intval($this->database->lastInsertId(), 10);
             } else {
                 $stmt = $this->database->prepare('SELECT valid_until FROM `users` WHERE aid=:id');
                 $stmt->execute([':id' => $id]);
@@ -67,6 +67,7 @@ class Login
                 }
             }
             if (!$this->mailer->send(
+                $id,
                 'login',
                 [
                     'oneTime' => $oneTime,

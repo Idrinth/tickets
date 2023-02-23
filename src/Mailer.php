@@ -2,20 +2,29 @@
 
 namespace De\Idrinth\Tickets;
 
-use De\Idrinth\Tickets\DTO\Mail;
+use De\Idrinth\Tickets\Services\BlacklistHash;
+use PDO;
 use PHPMailer\PHPMailer\PHPMailer;
 
 class Mailer
 {
     private Twig $twig;
+    private PDO $database;
     
-    public function __construct(Twig $twig)
+    public function __construct(Twig $twig, PDO $database)
     {
         $this->twig = $twig;
+        $this->database = $database;
     }
 
-    public function send(string $template, array $templateContext, string $subject, string $toMail, string $toName)
+    public function send(int $tagetUser, string $template, array $templateContext, string $subject, string $toMail, string $toName)
     {
+        $stmt = $this->database->prepare('SELECT 1 FROM email_blacklist WHERE email=:email');
+        $stmt->execute([':email' => $toMail]);
+        if ($stmt->fetchColumn() === '1') {
+            error_log("$toMail is blacklisted");
+            return false;
+        }
         $mailer = new PHPMailer();
         $mailer->setFrom($_ENV['MAIL_FROM_MAIL'], $_ENV['MAIL_FROM_NAME']);
         $mailer->addAddress($toMail, $toName);
@@ -29,6 +38,16 @@ class Mailer
         $mailer->isHTML(true);
         $mailer->Mailer ='smtp';
         $mailer->Subject = $subject;
+        $mailer->addCustomHeader(
+            'List-Unsubscribe',
+            implode(
+                ', ',
+                [
+                    '<https://' . $_ENV['SYSTEM_HOSTNAME'] . '/email-blacklist/' . BlacklistHash::hash($toMail, $tagetUser) . '>',
+                    '<mailto: ' . $_ENV['MAIL_FROM_MAIL'] . '?subject=blacklist>',
+                ]
+            )
+        );
         $mailer->Body = $this->twig->render(
             "mails/$template-html",
             $templateContext
