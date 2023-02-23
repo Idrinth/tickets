@@ -41,6 +41,7 @@
         <form method="post" onchange="this.submit();">
             <label for="project">Project</label>
             <select name="project" id="project">
+                {% if ticket.project==0 %}<option selected value="unknown">Unknown</option>{% endif %}
                 <optgroup label="Nexusmods">
                 {% for project in projects %}
                     {% if project.nexusmods is not empty %}
