@@ -37,6 +37,36 @@
     {% else %}
         <p>Status: {{ stati[ticket.status].name }}({{ stati[ticket.status].type }})</p>
     {% endif %}
+    {% if isContributor %}
+        <form method="post" onchange="this.submit();">
+            <label for="project">Project</label>
+            <select name="project" id="project">
+                <optgroup label="Nexusmods">
+                {% for project in projects %}
+                    {% if project.nexusmods is not empty %}
+                        <option{% if ticket.project==project.aid %} selected{% endif %} title="{{ project.description }}" value="/{{ project.slug }}">{{ project.name }}</option>
+                    {% endif %}
+                {% endfor %}
+                </optgroup>
+                <optgroup label="Github">
+                {% for project in projects %}
+                    {% if project.nexusmods is not empty %}
+                        <option{% if ticket.project==project.aid %} selected{% endif %} title="{{ project.description }}" value="/{{ project.slug }}">{{ project.name }}</option>
+                    {% endif %}
+                {% endfor %}
+                </optgroup>
+                <optgroup label="Other">
+                {% for project in projects %}
+                    {% if project.nexusmods is not empty %}
+                        <option{% if ticket.project==project.aid %} selected{% endif %} title="{{ project.description }}" value="/{{ project.slug }}">{{ project.name }}</option>
+                    {% endif %}
+                {% endfor %}
+                </optgroup>
+            </select>
+        </form>
+    {% else %}
+        <p title="{{ ticket_project.description }}">Project: {{ ticket_project.name }}</p>
+    {% endif %}
     <div class="description">{% autoescape false %}
     {{ ticket.description | markdown }}
     {% endautoescape %}</div>

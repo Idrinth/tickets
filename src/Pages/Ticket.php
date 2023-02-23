@@ -51,7 +51,7 @@ class Ticket
                     ->prepare('INSERT IGNORE INTO roles (project, `user`, `role`) VALUES (:project,:user,"member")')
                     ->execute([':project' => $project['aid'], ':user' => $_SESSION['id']]);
             }
-            $stmt = $this->database->prepare('SELECT COUNT(*) FROM upvotes WhERE `user`=:user AND ticket=:ticket');
+            $stmt = $this->database->prepare('SELECT COUNT(*) FROM upvotes WHERE `user`=:user AND ticket=:ticket');
             $stmt->execute([':ticket' => $ticket['aid'], ':user' => $_SESSION['id']]);
             $isUpvoter = $stmt->fetchColumn()==='1';
             $stmt = $this->database->prepare('SELECT `role` FROM roles WHERE project=:project AND `user`=:user');
@@ -166,7 +166,7 @@ class Ticket
                 'isContributor' => $isContributor,
                 'times' => $times,
                 'users' => $users,
-                'project' => $project,
+                'ticket_project' => $project,
                 'ticket' => $ticket,
                 'comments' => $comments,
                 'upvotes' => intval($stmt->fetchColumn(), 10),
