@@ -50,14 +50,14 @@
                 </optgroup>
                 <optgroup label="Github">
                 {% for project in projects %}
-                    {% if project.nexusmods is not empty %}
+                    {% if project.github is not empty %}
                         <option{% if ticket.project==project.aid %} selected{% endif %} title="{{ project.description }}" value="/{{ project.slug }}">{{ project.name }}</option>
                     {% endif %}
                 {% endfor %}
                 </optgroup>
                 <optgroup label="Other">
                 {% for project in projects %}
-                    {% if project.nexusmods is not empty %}
+                    {% if project.nexusmods is empty and project.github is empty %}
                         <option{% if ticket.project==project.aid %} selected{% endif %} title="{{ project.description }}" value="/{{ project.slug }}">{{ project.name }}</option>
                     {% endif %}
                 {% endfor %}
