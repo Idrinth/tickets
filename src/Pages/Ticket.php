@@ -2,6 +2,7 @@
 
 namespace De\Idrinth\Tickets\Pages;
 
+use De\Idrinth\Tickets\Services\Antivirus;
 use De\Idrinth\Tickets\Services\Mailer;
 use De\Idrinth\Tickets\Services\Watcher;
 use De\Idrinth\Tickets\Twig;
