@@ -15,28 +15,31 @@ class Antivirus
 
     public function clean(string $data): bool
     {
+        $tmp = sys_get_temp_dir() . '/clamav-' . microtime(true);
+        if (!file_put_contents($tmp, $data)) {
+            error_log('Couldn\'t set data for ClamAV.');
+            return false;
+        }
+        sleep(5);
+        $return = $this->fclean($tmp);
+        unlink($tmp);
+        return $return;
+    }
+
+    public function fclean(string $file): bool
+    {
         if (!$this->clam->ping()) {
             error_log('ClamAV not found!');
             return false;
         }
-        $tmp = sys_get_temp_dir() . '/clamav-' . microtime(true);
-        if (!$tmp) {
-            error_log('Couldn\'t prepare data for ClamAV.');
-        }
-        if (!file_put_contents($tmp, $data)) {
-            error_log('Couldn\'t write data for ClamAV.');
-            return false;
-        }
-        if (!chmod($tmp, 0777)) {
+        if (!chmod($file, 0777)) {
             error_log('Couldn\'t change access for ClamAV.');
             return false;
         }
-        sleep(1);
-        $return = $this->clam->fileScan($tmp);
+        $return = $this->clam->fileScan($file);
         if (!$return) {
             error_log('ClamAV found an issue with an uploaded file.');
         }
-        unlink($tmp);
         return $return;
     }
 }
