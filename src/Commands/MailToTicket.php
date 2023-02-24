@@ -28,7 +28,7 @@ class MailToTicket
             $_ENV['MAIL_USER'],
             $_ENV['MAIL_PASSWORD']
         );
-        $mailbox->setConnectionArgs(CL_EXPUNGE | OP_SECURE);
+        $mailbox->setConnectionArgs(CL_EXPUNGE);
 
         try {
             $mailIds = $mailbox->searchMailbox('ALL');
