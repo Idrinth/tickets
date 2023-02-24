@@ -102,6 +102,14 @@
     {% endif %}
     </ul>
 </div>
+<ul id="attachments">
+{% for attachment in attachments %}
+    <li class="attachment">
+        <strong><a href="/attachments/{{ attachment.aid }}">{{ attachment.name }}</a></strong>
+        <span>{{ attachment.uploaded }}</span>
+    </li>
+{% endfor %}
+</ul>
 <ul>
 {% for comment in comments %}
     <li class="comment" id="c{{ comment.aid }}">

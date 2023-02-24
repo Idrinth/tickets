@@ -281,6 +281,8 @@ class Ticket
         $stmt->execute([':ticket' => $ticket['aid']]);
         $stmt2 = $this->database->prepare('SELECT `user` FROM watchers WHERE ticket=:ticket');
         $stmt2->execute([':ticket' => $ticket['aid']]);
+        $stmt3 = $this->database->prepare('SELECT `aid`,`uploaded`,`name` FROM uploads WHERE ticket=:ticket');
+        $stmt3->execute([':ticket' => $ticket['aid']]);
         return $this->twig->render(
             'ticket',
             [
@@ -295,6 +297,7 @@ class Ticket
                 'upvotes' => intval($stmt->fetchColumn(), 10),
                 'isUpvoter' => $isUpvoter,
                 'watchers' => $stmt2->fetchAll(PDO::FETCH_ASSOC),
+                'attachments' => $stmt3->fetchAll(PDO::FETCH_ASSOC),
             ]
         );
     }
