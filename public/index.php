@@ -1,5 +1,6 @@
 <?php
 
+use Appwrite\ClamAV\Pipe;
 use De\Idrinth\Tickets\API\Attachment;
 use De\Idrinth\Tickets\API\Notification;
 use De\Idrinth\Tickets\Application;
@@ -21,6 +22,7 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 (new Application())
     ->register(new PDO('mysql:host=' . $_ENV['DATABASE_HOST'] . ';dbname=' . $_ENV['DATABASE_DATABASE'], $_ENV['DATABASE_USER'], $_ENV['DATABASE_PASSWORD']))
     ->register(new FilesystemLoader(dirname(__DIR__) . '/templates'))
+    ->register(new Pipe($_ENV['CLAM_AV_SOCKET']))
     ->get('/', Home::class)
     ->get('/api/notifications', Notification::class)
     ->get('/api/attachments/{ticket:[a-z0-9]+}/{id:[0-9]+}', Attachment::class)
