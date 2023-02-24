@@ -133,7 +133,20 @@ class Ticket
                 $stmt->execute([':ticket' => $ticket['aid']]);
                 foreach ($this->watcher->ticket($ticket['aid'], $_SESSION['id']) as $watcher) {
                     if ($this->watcher->mailable($watcher)) {
-                        //@todo
+                        $this->mailer->send(
+                            $watcher['aid'],
+                            'time-logged',
+                            [
+                                'hostname' => $_ENV['SYSTEM_HOSTNAME'],
+                                'ticket' => $ticket['slug'],
+                                'project' => 'unknown',
+                                'name' => $watcher['display'],
+                                'duration' => $post['duration'],
+                            ],
+                            "Status change for Ticket {$ticket['slug']}",
+                            $watcher['email'],
+                            $watcher['display']
+                        );
                     }
                     $this->database
                         ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
@@ -154,7 +167,7 @@ class Ticket
                     if ($this->watcher->mailable($watcher)) {
                         $this->mailer->send(
                             $watcher['aid'],
-                            'nstatus-changed',
+                            'status-changed',
                             [
                                 'hostname' => $_ENV['SYSTEM_HOSTNAME'],
                                 'ticket' => $ticket['slug'],
