@@ -12,4 +12,4 @@ require dirname(__DIR__) . '/vendor/autoload.php';
     ->register(new FilesystemLoader(dirname(__DIR__) . '/templates'))
     ->register(new HtmlConverter(array('strip_tags' => true)))
     ->add('mail2ticket', MailToTicket::class)
-    ->run();
+    ->run(...$argv);
