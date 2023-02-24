@@ -2,7 +2,7 @@
 
 use De\Idrinth\Tickets\Commands\MailToTicket;
 use League\HTMLToMarkdown\HtmlConverter;
-use MongoDB\Driver\Command;
+use De\Idrinth\Tickets\Command;
 use Twig\Loader\FilesystemLoader;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
