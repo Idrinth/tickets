@@ -145,15 +145,36 @@ WHERE ticket=:ticket AND `users.aid`<>:user');
                 $this->database
                     ->prepare('UPDATE tickets SET `status`=:status WHERE aid=:aid')
                     ->execute([':status' => $post['status'],':aid' => $ticket['aid']]);
-                $stmt = $this->database->prepare('SELECT `user` FROM watchers WHERE ticket=:ticket');
-                $stmt->execute([':ticket' => $ticket['aid']]);
+                $stmt = $this->database->prepare('SELECT name FROM stati WHERE aid=:aid');
+                $stmt->execute([':aid' => $post['status']]);
+                $status = $stmt->fetchColumn();
+                $stmt = $this->database->prepare('SELECT `users`.*
+FROM watchers
+INNER JOIN `users` ON watchers.`user`=`users`.aid
+WHERE ticket=:ticket AND `users.aid`<>:user');
+                $stmt->execute([':ticket' => $ticket['aid'], ':user' => $_SESSION['id']]);
                 foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $watcher) {
-                    if (intval($watcher['user']) !== $_SESSION['id']) {
-                        $this->database
-                            ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
-                            ->execute([':url' => "/{$project['slug']}/{$ticket['slug']}", ':user' => $watcher['user'],':ticket' => $ticket['aid'], ':content' => 'Status was changed.']);
+                    if ($watcher['email'] && $watcher['mail_valid'] === '1' && $watcher['enable_mail_update'] === '1') {
+                        $this->mailer->send(
+                            $watcher['aid'],
+                            'nstatus-changed',
+                            [
+                                'hostname' => $_ENV['SYSTEM_HOSTNAME'],
+                                'ticket' => $ticket['slug'],
+                                'project' => 'unknown',
+                                'name' => $watcher['display'],
+                                'status' => $status,
+                            ],
+                            "Status change for Ticket {$ticket['slug']}",
+                            $watcher['email'],
+                            $watcher['display']
+                        );
                     }
+                    $this->database
+                        ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
+                        ->execute([':url' => "/{$project['slug']}/{$ticket['slug']}", ':user' => $watcher['aid'],':ticket' => $ticket['aid'], ':content' => 'Status was changed.']);
                 }
+                
                 $this->database
                     ->prepare('INSERT IGNORE INTO watchers (ticket, `user`) VALUES (:id, :user)')
                     ->execute([':id' => $ticket['aid'], ':user' => $_SESSION['id']]);
