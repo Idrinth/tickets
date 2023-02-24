@@ -67,6 +67,19 @@ class MailToTicket
                     $this->database
                         ->prepare('UPDATE tickets SET modified=NOW() WHERE aid=:aid')
                         ->execute([':aid' => $ticket['aid']]);
+                    $this->mailer->send(
+                        $user,
+                        'comment-created',
+                        [
+                            'hostname' => $_ENV['SYSTEM_HOSTNAME'],
+                            'ticket' => $matches[2],
+                            'project' => 'unknown',
+                            'name' => $fromName,
+                        ],
+                        "Commented on Ticket $matches[2]",
+                        $fromMail,
+                        $fromName
+                    );
                     return;
                 }
             }
