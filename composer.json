@@ -13,7 +13,9 @@
         "vlucas/phpdotenv": "*",
         "erusev/parsedown": "*",
         "wohali/oauth2-discord-new": "^1.1",
-        "phpmailer/phpmailer": "^6.7.1"
+        "phpmailer/phpmailer": "^6.7.1",
+        "php-imap/php-imap": "^5.0.1",
+        "league/html-to-markdown": "^5.1.0"
     },
     "autoload": {
         "psr-4": {

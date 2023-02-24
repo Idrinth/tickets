@@ -6,15 +6,13 @@ use Dotenv\Dotenv;
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
 use ReflectionClass;
-use ReflectionMethod;
 use Throwable;
-use UnexpectedValueException;
 use function FastRoute\simpleDispatcher;
 
 class Application
 {
     private $routes=[];
-    private $singletons=[];
+    private DependencyInjector $di;
     private const LIFETIME=86400;
     public function __construct()
     {
@@ -24,21 +22,12 @@ class Application
         session_set_cookie_params(self::LIFETIME, '/', $_ENV['SYSTEM_HOSTNAME'], true, true);
         session_start();
         $_SESSION['_last'] = time();
+        $this->di = new DependencyInjector();
     }
 
     public function register(object $singleton): self
     {
-        $rf = new ReflectionClass($singleton);
-        $this->singletons[$rf->getName()] = $singleton;
-        foreach ($rf->getInterfaces() as $interface) {
-            $this->singletons[$interface->getName()] = $singleton;
-        }
-        while ($rf = $rf->getParentClass()) {
-            $this->singletons[$rf->getName()] = $singleton;
-            foreach ($rf->getInterfaces() as $interface) {
-                $this->singletons[$interface->getName()] = $singleton;
-            }
-        }
+        $this->di->register($singleton);
         return $this;
     }
 
@@ -56,27 +45,6 @@ class Application
         $this->routes[$path] = $this->routes[$path] ?? [];
         $this->routes[$path][$method] = $class;
         return $this;
-    }
-    private function init(ReflectionClass $class): object
-    {
-        if (!isset($this->singletons[$class->getName()])) {
-            $args = [];
-            $constructor = $class->getConstructor();
-            if ($constructor instanceof ReflectionMethod) {
-                foreach ($constructor->getParameters() as $parameter) {
-                    if ($parameter->isOptional()) {
-                        break;
-                    }
-                    $args[] = $this->init($parameter->getClass());
-                }
-            }
-            $handler = $class->getName();
-            $this->register(new $handler(...$args));
-        }
-        if (!isset($this->singletons[$class->getName()])) {
-            throw new UnexpectedValueException("Couldn'find {$class->getName()} in " . implode(',', array_keys($this->singletons)));
-        }
-        return $this->singletons[$class->getName()];
     }
     public function run(): void
     {
@@ -101,13 +69,12 @@ class Application
                 echo "404 NOT FOUND";
                 break;
             case Dispatcher::METHOD_NOT_ALLOWED:
-                $allowedMethods = $routeInfo[1];
                 header('', true, 405);
                 echo "405 METHOD NOT ALLOWED";
                 break;
             case Dispatcher::FOUND:
                 $vars = $routeInfo[2];
-                $obj = $this->init(new ReflectionClass($routeInfo[1]));
+                $obj = $this->di->init(new ReflectionClass($routeInfo[1]));
                 try {
                     echo $obj->run($_POST, ...array_values($vars));
                 } catch (Throwable $t) {
