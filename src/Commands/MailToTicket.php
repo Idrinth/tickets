@@ -54,12 +54,34 @@ class MailToTicket
                         ->prepare('INSERT INTO comments (`ticket`,`creator`,`created`,`content`) VALUES (:ticket,:user,NOW(),:content)')
                         ->execute([':ticket' => $ticket['aid'],':user' => $user,':content' => $body]);
                     $comment = $this->database->lastInsertId();
-                    $stmt = $this->database->prepare('SELECT `user` FROM watchers WHERE ticket=:ticket');
-                    $stmt->execute([':ticket' => $ticket['aid']]);
+                    $stmt = $this->database->prepare('SELECT `users`.*
+FROM watchers
+INNER JOIN `users` ON watchers.`user`=`users`.aid
+WHERE ticket=:ticket AND `users.aid`<>:user');
+                    $stmt->execute([':ticket' => $ticket['aid'],':user' => $user]);
                     foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $watcher) {
+                        if ($watcher['email'] && $watcher['mail_valid'] === '1' && $watcher['enable_mail_update'] === '1') {
+                            $this->mailer->send(
+                                $watcher['aid'],
+                                'new-comment',
+                                [
+                                    'hostname' => $_ENV['SYSTEM_HOSTNAME'],
+                                    'ticket' => $matches[2],
+                                    'project' => 'unknown',
+                                    'name' => $watcher['display'],
+                                    'comment' => [
+                                        'content' => $body,
+                                        'author' => $fromName
+                                    ],
+                                ],
+                                "New comment on Ticket $matches[2]",
+                                $watcher['email'],
+                                $watcher['display']
+                            );
+                        }
                         $this->database
                             ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
-                            ->execute([':url' => "/unknown/{$ticket['slug']}#c{$comment}", ':user' => $watcher['user'],':ticket' => $ticket['aid'], ':content' => 'A new comment was written.']);
+                            ->execute([':url' => "/unknown/{$ticket['slug']}#c{$comment}", ':user' => $watcher['aid'],':ticket' => $ticket['aid'], ':content' => 'A new comment was written.']);
                     }
                     $this->database
                         ->prepare('INSERT IGNORE INTO watchers (ticket, `user`) VALUES (:id, :user)')
@@ -100,7 +122,7 @@ class MailToTicket
                 if (intval($watcher['user'], 10) !== $user) {
                     $this->database
                         ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
-                        ->execute([':url' => '/unknown/'.$slug, ':user' => $watcher['user'],':ticket' => $id, ':content' => 'A new ticket was written.']);
+                        ->execute([':url' => '/unknown/' . $slug, ':user' => $watcher['user'],':ticket' => $id, ':content' => 'A new ticket was written.']);
                 }
             }
             $this->database

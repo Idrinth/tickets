@@ -7,9 +7,9 @@
     <body>
         <h1>Comment created at {{ hostname }}</h1>
         <p>Hello {{ name }}</p>
-        <p>We created a comment from your last mail at <a href="https://{{ hostname }}/{{ project }}/{{ ticket }}">{{ hostname }}/{{ project }}/{{ ticket }}</a> and will work on it as soon as possible.</p>
-        <p>We created an account for you if you didn't have one before, so that you can adjust your preferences in the profile. Any new account will have been opted into ticket-updates via email automatically.</p>
-        <p>If you want to add something, just answer to this mail without changing the subject.</p>
+        <p>The following comment has been added to <a href="https://{{ hostname }}/{{ project }}/{{ ticket }}">{{ hostname }}/{{ project }}/{{ ticket }}</a> by >{{ comment.author }}:</p>
+        <div style="background:#eee;padding: 0.2em;">{{ comment.content | markdown | raw }}</div>
+        <p>If you want to add something to the ticket, just answer to this mail without changing the subject.</p>
         <p>Have a great day,<br/>Your Ticket-Bot</p>
         <br/>
         <p>The site {{ hostname }} is hosted and operated by Björn 'Idrinth' Büttner, see the <a href="https://{{ hostname }}/imprint">imprint</a> for more information.

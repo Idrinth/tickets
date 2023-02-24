@@ -73,9 +73,31 @@ class Ticket
                     ->prepare('INSERT INTO comments (`ticket`,`creator`,`created`,`content`) VALUES (:ticket,:user,NOW(),:content)')
                     ->execute([':ticket' => $ticket['aid'],':user' => $_SESSION['id'],':content' => $post['content']]);
                 $comment = $this->database->lastInsertId();
-                $stmt = $this->database->prepare('SELECT `user` FROM watchers WHERE ticket=:ticket');
-                $stmt->execute([':ticket' => $ticket['aid']]);
+                    $stmt = $this->database->prepare('SELECT `users`.*
+FROM watchers
+INNER JOIN `users` ON watchers.`user`=`users`.aid
+WHERE ticket=:ticket AND `users.aid`<>:user');
+                    $stmt->execute([':ticket' => $ticket['aid'],':user' => $_SESSION['id']]);
                 foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $watcher) {
+                    if ($watcher['email'] && $watcher['mail_valid'] === '1' && $watcher['enable_mail_update'] === '1') {
+                        $this->mailer->send(
+                            $watcher['aid'],
+                            'new-comment',
+                            [
+                                'hostname' => $_ENV['SYSTEM_HOSTNAME'],
+                                'ticket' => $ticket['slug'],
+                                'project' => 'unknown',
+                                'name' => $watcher['display'],
+                                'comment' => [
+                                    'content' => $post['content'],
+                                    'author' => 'someone'
+                                ],
+                            ],
+                            "New comment on Ticket {$ticket['slug']}",
+                            $watcher['email'],
+                            $watcher['display']
+                        );
+                    }
                     $this->database
                         ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
                         ->execute([':url' => "/{$project['slug']}/{$ticket['slug']}#c{$comment}", ':user' => $watcher['user'],':ticket' => $ticket['aid'], ':content' => 'A new comment was written.']);
