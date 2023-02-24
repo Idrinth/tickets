@@ -3,6 +3,7 @@
 namespace De\Idrinth\Tickets\Services;
 
 use De\Idrinth\Tickets\Services\BlacklistHash;
+use De\Idrinth\Tickets\Twig;
 use PDO;
 use PHPMailer\PHPMailer\PHPMailer;
 
