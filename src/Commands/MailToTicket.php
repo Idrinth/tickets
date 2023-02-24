@@ -28,7 +28,7 @@ class MailToTicket
     private function handleMail(IncomingMail $mail): void
     {
         $fromMail = $mail->fromAddress;
-        $fromName = $mail->fromName;
+        $fromName = $mail->fromName ?? explode('@', $mail->fromAddress)[0];
         $subject = $mail->subject ?? '';
         if ($mail->textHtml === null && $mail->textPlain === null) {
             $body = '';
