@@ -108,6 +108,15 @@
         <strong title="{{ attachment.uploaded }}"><a href="/api/attachments/{{ ticket.slug }}/{{ attachment.aid }}">{{ attachment.name }}</a></strong>
     </li>
 {% endfor %}
+{% if user is not empty and user.aid > 0 %}
+    <li class="attachment">
+        <form method="post">
+            <label for="file">Your file</label>
+            <input type="file" name="file" id="file"/>
+            <button type="submit">Upload</button>
+        </form>
+    </li>
+{% endif %}
 </ul>
 <ul>
 {% for comment in comments %}
