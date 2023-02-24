@@ -19,7 +19,7 @@ class Antivirus
             error_log('ClamAV not found!');
             return false;
         }
-        $tmp = tempnam(sys_get_temp_dir(), 'clamav');
+        $tmp = sys_get_temp_dir() . '/clamav-' . microtime(true);
         if (!$tmp) {
             error_log('Couldn\'t prepare data for ClamAV.');
         }
@@ -36,7 +36,7 @@ class Antivirus
         if (!$return) {
             error_log('ClamAV found an issue with an uploaded file.');
         }
-        //unlink($tmp);
+        unlink($tmp);
         return $return;
     }
 }
