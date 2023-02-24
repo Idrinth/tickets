@@ -19,12 +19,14 @@ class Antivirus
             return true;
         }
         $tmp = dirname(__DIR__, 2) . '/cache/clamav-' . microtime(true) . md5($data);
-        if (!file_put_contents($tmp, $data)) {
-            error_log('Couldn\'t set data for ClamAV.');
-            return false;
+        while (!is_file($tmp)) {
+            if (!file_put_contents($tmp, $data)) {
+                error_log('Couldn\'t set data for ClamAV.');
+                return false;
+            }
         }
         $return = $this->fclean($tmp);
-        unlink($tmp);
+        //unlink($tmp);
         return $return;
     }
 
@@ -34,12 +36,14 @@ class Antivirus
             return true;
         }
         $tmp = dirname(__DIR__, 2) . '/cache/clamav-' . microtime(true) . md5($file);
-        if (!copy($file, $tmp)) {
-            error_log('Couldn\'t set data for ClamAV.');
-            return false;
+        while (!is_file($tmp)) {
+            if (!copy($file, $tmp)) {
+                error_log('Couldn\'t set data for ClamAV.');
+                return false;
+            }
         }
         $return = $this->clean($tmp);
-        unlink($tmp);
+        //unlink($tmp);
         return $return;
     }
 
