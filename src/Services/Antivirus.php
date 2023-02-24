@@ -15,7 +15,7 @@ class Antivirus
 
     public function sclean(string $data): bool
     {
-        $tmp = dirname(__DIR__, 2) . '/clamav-' . microtime(true);
+        $tmp = dirname(__DIR__, 2) . '/cache/clamav-' . microtime(true) . md5($data);
         if (!file_put_contents($tmp, $data)) {
             error_log('Couldn\'t set data for ClamAV.');
             return false;
@@ -27,7 +27,7 @@ class Antivirus
 
     public function fclean(string $file): bool
     {
-        $tmp = dirname(__DIR__, 2) . '/clamav-' . microtime(true);
+        $tmp = dirname(__DIR__, 2) . '/cache/clamav-' . microtime(true) . md5($file);
         copy($file, $tmp);
         $return = $this->clean($tmp);
         unlink($tmp);
