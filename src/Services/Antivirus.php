@@ -35,7 +35,7 @@ class Antivirus
         if (!$return) {
             error_log('ClamAV found an issue with an uploaded file.');
         }
-        unlink($tmp);
+        //unlink($tmp);
         return $return;
     }
 }
