@@ -29,7 +29,7 @@ class Antivirus
     {
         $tmp = dirname(__DIR__, 2) . '/clamav-' . microtime(true);
         copy($file, $tmp);
-        $return = $this->clean($file);
+        $return = $this->clean($tmp);
         unlink($tmp);
         return $return;
     }
