@@ -40,12 +40,12 @@ class MailToTicket
                 $fromMail = $mail->fromAddress;
                 $fromName = $mail->fromName;
                 $subject = $mail->subject ?? '';
-                if ($mail->textHTML === null && $mail->textPlain === null) {
+                if ($mail->textHtml === null && $mail->textPlain === null) {
                     $body = '';
                 } elseif ($mail->textPlain) {
                     $body = "```\n{$mail->textPlain}\n```";
                 } else {
-                    $body = $this->converter->convert($mail->textHTML);
+                    $body = $this->converter->convert($mail->textHtml);
                 }
                 if ($body && $subject) {
                     $stmt = $this->database->prepare('SELECT aid FROM `users` WHERE email=:email');
@@ -71,10 +71,10 @@ class MailToTicket
                     $stmt = $this->database->prepare("SELECT `user` FROM roles WHERE role='contributor' AND project=:project");
                     $stmt->execute([':project' => $project]);
                     foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $watcher) {
-                        if (intval($watcher['user'], 10) !== $_SESSION['id']) {
+                        if (intval($watcher['user'], 10) !== $user) {
                             $this->database
                                 ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
-                                ->execute([':url' => '/'.$post['project'].'/'.$slug, ':user' => $watcher['user'],':ticket' => $id, ':content' => 'A new ticket was written.']);
+                                ->execute([':url' => '/unknown/'.$slug, ':user' => $watcher['user'],':ticket' => $id, ':content' => 'A new ticket was written.']);
                         }
                     }
                     $this->database
