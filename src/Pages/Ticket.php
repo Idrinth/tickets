@@ -74,7 +74,7 @@ class Ticket
             $stmt = $this->database->prepare('SELECT `role` FROM roles WHERE project=:project AND `user`=:user');
             $stmt->execute([':project' => $project['aid'], ':user' => $_SESSION['id']]);
             $isContributor = $stmt->fetchColumn()==='contributor';
-            if (isset($_FILES['file'])) {
+            if (isset($_FILES['file']) && isset($_FILES['file']['tmp_name']) && $_FILES['file']['tmp_name']) {
                 $this->database
                     ->prepare('INSERT INTO uploads (`ticket`,`user`,`uploaded`,`data`,`name`) VALUES (:ticket,:user,NOW(),:data,:name)')
                     ->execute([':ticket' => $ticket['aid'], ':user' => $_SESSION['id'] , ':data' => file_get_contents($_FILES['file']['tmp_name']), ':name' => basename($_FILES['file']['name'])]);
