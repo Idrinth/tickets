@@ -16,6 +16,7 @@ class Antivirus
     public function clean(string $data): bool
     {
         if (!$this->clam->ping()) {
+            error_log('ClamAV not found!');
             return false;
         }
         $tmp = tempnam(sys_get_temp_dir(), 'clamav');
