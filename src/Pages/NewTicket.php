@@ -33,7 +33,20 @@ class NewTicket
                 ->execute([':slug' => $slug, ':id' => $id]);
             foreach ($this->watcher->project($project, $_SESSION['id']) as $watcher) {
                 if ($this->watcher->mailable($watcher)) {
-                    //@todo
+                    $this->mailer->send(
+                        $watcher['aid'],
+                        'new-ticket',
+                        [
+                            'hostname' => $_ENV['SYSTEM_HOSTNAME'],
+                            'ticket' => $slug,
+                            'project' => 'unknown',
+                            'author' => 'somebody',
+                            'title' => $post['title'],
+                        ],
+                        "Ticket $slug Created",
+                        $watcher['email'],
+                        $watcher['display']
+                    );
                 }
                 $this->database
                     ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
