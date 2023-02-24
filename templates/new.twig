@@ -5,6 +5,9 @@
     <form method="post">
         <label for="title">Title/Subject</label>
         <input type="text" id="title" name="title" required/>
+        <label for="unlisted">Unlisted</label>
+        <input type="hidden" value="0" name="unlisted"/>
+        <input type="checkbox" value="1" id="unlisted" name="unlisted"/>
         <label for="description">Description(<a href="https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github" target="_blanK">Markdown</a>)</label>
         <textarea id="description" name="description" required></textarea>
         <label for="type">Type</label>

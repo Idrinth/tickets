@@ -198,7 +198,19 @@ class Ticket
                     ->execute([':project' => $project['aid'],':aid' => $ticket['aid']]);
                 foreach ($this->watcher->ticket($ticket['aiud'], $_SESSION['id']) as $watcher) {
                     if ($this->watcher->mailable($watcher)) {
-                        //@todo
+                        $this->mailer->send(
+                            $watcher['aid'],
+                            'project-changed',
+                            [
+                                'hostname' => $_ENV['SYSTEM_HOSTNAME'],
+                                'ticket' => $ticket['slug'],
+                                'name' => $watcher['display'],
+                                'project' => $project,
+                            ],
+                            "Project change for Ticket {$ticket['slug']}",
+                            $watcher['email'],
+                            $watcher['display']
+                        );
                     }
                     $this->database
                         ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
@@ -211,10 +223,23 @@ class Ticket
             } elseif($isContributor && isset($post['unlisted'])) {
                 $this->database
                     ->prepare('UPDATE tickets SET `private`=:private WHERE aid=:aid')
-                    ->execute([':project' => $project['aid'],':aid' => $ticket['aid']]);
-                foreach ($this->watcher->ticket($ticket['aiud'], $_SESSION['id']) as $watcher) {
+                    ->execute([':private' => $post['unlisted'],':aid' => $ticket['aid']]);
+                foreach ($this->watcher->ticket($ticket['aid'], $_SESSION['id']) as $watcher) {
                     if ($this->watcher->mailable($watcher)) {
-                        //@todo
+                        $this->mailer->send(
+                            $watcher['aid'],
+                            'visibility-changed',
+                            [
+                                'hostname' => $_ENV['SYSTEM_HOSTNAME'],
+                                'ticket' => $ticket['slug'],
+                                'name' => $watcher['display'],
+                                'project' => $project['slug'],
+                                'unlisted' => $post['unlisted'],
+                            ],
+                            "Visibility change for Ticket {$ticket['slug']}",
+                            $watcher['email'],
+                            $watcher['display']
+                        );
                     }
                     $this->database
                         ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')

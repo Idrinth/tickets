@@ -23,17 +23,20 @@ class NewTicket
     }
     public function run($post)
     {
-        if (isset($_SESSION['id']) && isset($post['title']) && isset($post['description']) && isset($post['type']) && isset($post['project'])) {
+        if (isset($_SESSION['id']) && isset($post['title']) && isset($post['description']) && isset($post['type']) && isset($post['project']) && isset($post['unlisted'])) {
             $stmt = $this->database->prepare("SELECT aid FROM projects WHERE slug=:slug");
             $stmt->execute(['slug' => $post['project']]);
             $project = $stmt->fetchColumn();
-            $stmt = $this->database->prepare("INSERT INTO tickets (`title`,`description`,`creator`,`type`,`status`,`created`,`modified`,`project`) VALUES (:title,:description,:creator,:type,1,NOW(),NOW(),:project)");
-            $stmt->execute([':title' => $post['title'], ':description' => $post['description'], ':creator' => $_SESSION['id'],':type' => $post['type'],':project' => $project]);
+            $stmt = $this->database->prepare("INSERT INTO tickets (`title`,`description`,`creator`,`type`,`status`,`created`,`modified`,`project`,`private`) VALUES (:title,:description,:creator,:type,1,NOW(),NOW(),:project,:private)");
+            $stmt->execute([':title' => $post['title'], ':description' => $post['description'], ':creator' => $_SESSION['id'],':type' => $post['type'],':project' => $project,':private' => $post['unlisted']]);
             $id = $this->database->lastInsertId();
             $slug = base_convert("$id", 10, 36);
             $this->database
                 ->prepare('UPDATE tickets SET slug=:slug WHERE aid=:id')
                 ->execute([':slug' => $slug, ':id' => $id]);
+            $stmt = $this->database->prepare('SELECT display FROM `users` WHERE aid=:id');
+            $stmt->execute([':id' => $_SESSION['id']]);
+            $name = $stmt->fetchColumn();
             foreach ($this->watcher->project($project, $_SESSION['id']) as $watcher) {
                 if ($this->watcher->mailable($watcher)) {
                     $this->mailer->send(
@@ -42,8 +45,8 @@ class NewTicket
                         [
                             'hostname' => $_ENV['SYSTEM_HOSTNAME'],
                             'ticket' => $slug,
-                            'project' => 'unknown',
-                            'author' => 'somebody',
+                            'project' => $post['project'],
+                            'author' => $name,
                             'title' => $post['title'],
                         ],
                         "Ticket $slug Created",
