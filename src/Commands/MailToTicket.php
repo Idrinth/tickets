@@ -50,7 +50,7 @@ class MailToTicket
             $user = intval($this->database->lastInsertId(), 10);
         }
         $this->database
-            ->prepare('UPDATES `users` SET mail_valid=1 WHERE aid=:user')
+            ->prepare('UPDATE `users` SET mail_valid=1 WHERE aid=:user')
             ->execute([':user' => $user]);
         $matches = [];
         if (preg_match('/(^| |:)Ticket\s+([a-z0-9]+)($| )/', $subject, $matches)) {

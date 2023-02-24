@@ -120,7 +120,7 @@ class Ticket
                     $isUpvoter = true;
                 }
                 $wasModified=true;
-            }elseif (isset($post['watch'])) {
+            } elseif (isset($post['watch'])) {
                 $this->database
                     ->prepare('INSERT IGNORE INTO watchers (ticket, `user`) VALUES (:id, :user)')
                     ->execute([':id' => $ticket['aid'], ':user' => $_SESSION['id']]);
