@@ -196,14 +196,29 @@ class Ticket
                 $this->database
                     ->prepare('UPDATE tickets SET `project`=:project WHERE aid=:aid')
                     ->execute([':project' => $project['aid'],':aid' => $ticket['aid']]);
-                $stmt = $this->database->prepare('SELECT `user` FROM watchers WHERE ticket=:ticket');
-                $stmt->execute([':ticket' => $ticket['aid']]);
-                foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $watcher) {
-                    if (intval($watcher['user']) !== $_SESSION['id']) {
-                        $this->database
-                            ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
-                            ->execute([':url' => "/{$project['slug']}/{$ticket['slug']}", ':user' => $watcher['user'],':ticket' => $ticket['aid'], ':content' => 'Project was changed.']);
+                foreach ($this->watcher->ticket($ticket['aiud'], $_SESSION['id']) as $watcher) {
+                    if ($this->watcher->mailable($watcher)) {
+                        //@todo
                     }
+                    $this->database
+                        ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
+                        ->execute([':url' => "/{$project['slug']}/{$ticket['slug']}", ':user' => $watcher['user'],':ticket' => $ticket['aid'], ':content' => 'Project was changed.']);
+                }
+                $this->database
+                    ->prepare('INSERT IGNORE INTO watchers (ticket, `user`) VALUES (:id, :user)')
+                    ->execute([':id' => $ticket['aid'], ':user' => $_SESSION['id']]);
+                $wasModified=true;
+            } elseif($isContributor && isset($post['unlisted'])) {
+                $this->database
+                    ->prepare('UPDATE tickets SET `private`=:private WHERE aid=:aid')
+                    ->execute([':project' => $project['aid'],':aid' => $ticket['aid']]);
+                foreach ($this->watcher->ticket($ticket['aiud'], $_SESSION['id']) as $watcher) {
+                    if ($this->watcher->mailable($watcher)) {
+                        //@todo
+                    }
+                    $this->database
+                        ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
+                        ->execute([':url' => "/{$project['slug']}/{$ticket['slug']}", ':user' => $watcher['user'],':ticket' => $ticket['aid'], ':content' => 'Visibility was changed.']);
                 }
                 $this->database
                     ->prepare('INSERT IGNORE INTO watchers (ticket, `user`) VALUES (:id, :user)')
