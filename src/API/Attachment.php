@@ -2,6 +2,8 @@
 
 namespace De\Idrinth\Tickets\API;
 
+use PDO;
+
 class Attachment
 {
     private PDO $database;
