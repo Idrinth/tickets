@@ -46,7 +46,7 @@ class MailToTicket
             }
             $matches = [];
             if (preg_match('/(^| |:)Ticket ([a-z0-9]+)($| )/', $subject, $matches)) {
-                $stmt = $this->database->prepare('SELECT aid FROM ticket WHERE slug=:slug');
+                $stmt = $this->database->prepare('SELECT aid,slug FROM ticket WHERE slug=:slug');
                 $stmt->execute([':slug' => $matches[2]]);
                 $ticket = $stmt->fetch(PDO::FETCH_ASSOC);
                 if ($ticket) {
