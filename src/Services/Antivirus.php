@@ -31,6 +31,7 @@ class Antivirus
             error_log('Couldn\'t change access for ClamAV.');
             return false;
         }
+        sleep(1);
         $return = $this->clam->fileScan($tmp);
         if (!$return) {
             error_log('ClamAV found an issue with an uploaded file.');
