@@ -110,7 +110,7 @@
 {% endfor %}
 {% if user is not empty and user.aid > 0 %}
     <li class="attachment">
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             <label for="file">Your file</label>
             <input type="file" name="file" id="file"/>
             <button type="submit">Upload</button>
