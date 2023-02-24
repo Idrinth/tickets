@@ -23,16 +23,19 @@ class Antivirus
         if (!$tmp) {
             error_log('Couldn\'t prepare data for ClamAV.');
         }
-        chmod($tmp, 0777);
         if (!file_put_contents($tmp, $data)) {
             error_log('Couldn\'t write data for ClamAV.');
             return false;
         }
+        if (!chmod($tmp, 0777)) {
+            error_log('Couldn\'t change access for ClamAV.');
+            return false;
+        }
         $return = $this->clam->fileScan($tmp);
-        //unlink($tmp);
         if (!$return) {
             error_log('ClamAV found an issue with an uploaded file.');
         }
+        unlink($tmp);
         return $return;
     }
 }
