@@ -2,6 +2,7 @@
 
 namespace De\Idrinth\Tickets\Commands;
 
+use De\Idrinth\Tickets\Services\Antivirus;
 use De\Idrinth\Tickets\Services\Mailer;
 use De\Idrinth\Tickets\Services\Watcher;
 use League\HTMLToMarkdown\HtmlConverter;
@@ -16,13 +17,15 @@ class MailToTicket
     private HtmlConverter $converter;
     private Mailer $mailer;
     private Watcher $watcher;
+    private Antivirus $av;
 
-    public function __construct(PDO $database, HtmlConverter $converter, Mailer $mailer, Watcher $watcher)
+    public function __construct(PDO $database, HtmlConverter $converter, Mailer $mailer, Watcher $watcher, Antivirus $av)
     {
         $this->converter = $converter;
         $this->database = $database;
         $this->mailer = $mailer;
         $this->watcher = $watcher;
+        $this->av = $av;
     }
 
     private function handleMail(IncomingMail $mail): void
@@ -64,9 +67,11 @@ class MailToTicket
                 $comment = $this->database->lastInsertId();
                 if ($mail->hasAttachments()) {
                     foreach ($mail->getAttachments() as $attachment) {
-                        $this->database
-                            ->prepare('INSERT INTO uploads (`ticket`,`user`,`uploaded`,`data`,`name`) VALUES (:ticket,:user,NOW(),:data,:name)')
-                            ->execute([':ticket' => $ticket['aid'], ':user' => $user , ':data' => $attachment->getContents(), ':name' => $attachment->name]);
+                        if ($this->av->clean($attachment->getContents())) {
+                            $this->database
+                                ->prepare('INSERT INTO uploads (`ticket`,`user`,`uploaded`,`data`,`name`) VALUES (:ticket,:user,NOW(),:data,:name)')
+                                ->execute([':ticket' => $ticket['aid'], ':user' => $user , ':data' => $attachment->getContents(), ':name' => $attachment->name]);
+                        }
                     }            
                 }
                 foreach ($this->watcher->ticket($ticket['aid'], $user) as $watcher) {
@@ -125,9 +130,11 @@ class MailToTicket
         $slug = base_convert("$id", 10, 36);
         if ($mail->hasAttachments()) {
             foreach ($mail->getAttachments() as $attachment) {
-                $this->database
-                    ->prepare('INSERT INTO uploads (`ticket`,`user`,`uploaded`,`data`,`name`) VALUES (:ticket,:user,NOW(),:data,:name)')
-                    ->execute([':ticket' => $id, ':user' => $user , ':data' => $attachment->getContents(), ':name' => $attachment->name]);
+                if ($this->av->clean($attachment->getContents())) {
+                    $this->database
+                        ->prepare('INSERT INTO uploads (`ticket`,`user`,`uploaded`,`data`,`name`) VALUES (:ticket,:user,NOW(),:data,:name)')
+                        ->execute([':ticket' => $id, ':user' => $user , ':data' => $attachment->getContents(), ':name' => $attachment->name]);
+                }
             }            
         }
         $this->database

@@ -13,13 +13,15 @@ class Ticket
     private PDO $database;
     private Watcher $watcher;
     private Mailer $mailer;
+    private Antivirus $av;
 
-    public function __construct(Twig $twig, PDO $database, Watcher $watcher, Mailer $mailer)
+    public function __construct(Twig $twig, PDO $database, Watcher $watcher, Mailer $mailer, Antivirus $av)
     {
         $this->twig = $twig;
         $this->database = $database;
         $this->mailer = $mailer;
         $this->watcher = $watcher;
+        $this->av = $av;
     }
     public function run($post, $category, $ticket)
     {
@@ -75,9 +77,11 @@ class Ticket
             $stmt->execute([':project' => $project['aid'], ':user' => $_SESSION['id']]);
             $isContributor = $stmt->fetchColumn()==='contributor';
             if (isset($_FILES['file']) && isset($_FILES['file']['tmp_name']) && $_FILES['file']['tmp_name']) {
-                $this->database
-                    ->prepare('INSERT INTO uploads (`ticket`,`user`,`uploaded`,`data`,`name`) VALUES (:ticket,:user,NOW(),:data,:name)')
-                    ->execute([':ticket' => $ticket['aid'], ':user' => $_SESSION['id'] , ':data' => file_get_contents($_FILES['file']['tmp_name']), ':name' => basename($_FILES['file']['name'])]);
+                if ($this->av->clean(file_get_contents($_FILES['file']['tmp_name']))) {
+                    $this->database
+                        ->prepare('INSERT INTO uploads (`ticket`,`user`,`uploaded`,`data`,`name`) VALUES (:ticket,:user,NOW(),:data,:name)')
+                        ->execute([':ticket' => $ticket['aid'], ':user' => $_SESSION['id'] , ':data' => file_get_contents($_FILES['file']['tmp_name']), ':name' => basename($_FILES['file']['name'])]);
+                }
                 $wasModified = true;
             } elseif (isset($post['content'])) {
                 $this->database
