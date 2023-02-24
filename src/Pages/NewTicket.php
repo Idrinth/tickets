@@ -2,6 +2,7 @@
 
 namespace De\Idrinth\Tickets\Pages;
 
+use De\Idrinth\Tickets\Services\Watcher;
 use De\Idrinth\Tickets\Twig;
 use PDO;
 
@@ -9,11 +10,13 @@ class NewTicket
 {
     private Twig $twig;
     private PDO $database;
+    private Watcher $watcher;
 
-    public function __construct(Twig $twig, PDO $database)
+    public function __construct(Twig $twig, PDO $database, Watcher $watcher)
     {
         $this->twig = $twig;
         $this->database = $database;
+        $this->watcher = $watcher;
     }
     public function run($post)
     {
@@ -28,14 +31,13 @@ class NewTicket
             $this->database
                 ->prepare('UPDATE tickets SET slug=:slug WHERE aid=:id')
                 ->execute([':slug' => $slug, ':id' => $id]);
-            $stmt = $this->database->prepare("SELECT `user` FROM roles WHERE role='contributor' AND project=:project");
-            $stmt->execute([':project' => $project]);
-            foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $watcher) {
-                if (intval($watcher['user'], 10) !== $_SESSION['id']) {
-                    $this->database
-                        ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
-                        ->execute([':url' => '/'.$post['project'].'/'.$slug, ':user' => $watcher['user'],':ticket' => $id, ':content' => 'A new ticket was written.']);
+            foreach ($this->watcher->project($project, $_SESSION['id']) as $watcher) {
+                if ($this->watcher->mailable($watcher)) {
+                    //@todo
                 }
+                $this->database
+                    ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
+                    ->execute([':url' => '/'.$post['project'].'/'.$slug, ':user' => $watcher['user'],':ticket' => $id, ':content' => 'A new ticket was written.']);
             }
             $this->database
                 ->prepare('INSERT IGNORE INTO watchers (ticket, `user`) VALUES (:id, :user)')

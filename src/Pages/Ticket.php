@@ -2,6 +2,8 @@
 
 namespace De\Idrinth\Tickets\Pages;
 
+use De\Idrinth\Tickets\Services\Mailer;
+use De\Idrinth\Tickets\Services\Watcher;
 use De\Idrinth\Tickets\Twig;
 use PDO;
 
@@ -9,11 +11,15 @@ class Ticket
 {
     private Twig $twig;
     private PDO $database;
+    private Watcher $watcher;
+    private Mailer $mailer;
 
-    public function __construct(Twig $twig, PDO $database)
+    public function __construct(Twig $twig, PDO $database, Watcher $watcher, Mailer $mailer)
     {
         $this->twig = $twig;
         $this->database = $database;
+        $this->mailer = $mailer;
+        $this->watcher = $watcher;
     }
     public function run($post, $category, $ticket)
     {
@@ -73,13 +79,8 @@ class Ticket
                     ->prepare('INSERT INTO comments (`ticket`,`creator`,`created`,`content`) VALUES (:ticket,:user,NOW(),:content)')
                     ->execute([':ticket' => $ticket['aid'],':user' => $_SESSION['id'],':content' => $post['content']]);
                 $comment = $this->database->lastInsertId();
-                    $stmt = $this->database->prepare('SELECT `users`.*
-FROM watchers
-INNER JOIN `users` ON watchers.`user`=`users`.aid
-WHERE ticket=:ticket AND `users.aid`<>:user');
-                    $stmt->execute([':ticket' => $ticket['aid'],':user' => $_SESSION['id']]);
-                foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $watcher) {
-                    if ($watcher['email'] && $watcher['mail_valid'] === '1' && $watcher['enable_mail_update'] === '1') {
+                foreach ($this->watcher->ticket($ticket['aid'], $_SESSION['id']) as $watcher) {
+                    if ($this->watcher->mailable($watcher)) {
                         $this->mailer->send(
                             $watcher['aid'],
                             'new-comment',
@@ -130,12 +131,13 @@ WHERE ticket=:ticket AND `users.aid`<>:user');
                     ->execute([':user' => $_SESSION['id'],':ticket' => $ticket['aid'],':day' => date('Y-m-d'),':duration' => $time,':status' => $post['task']]);
                 $stmt = $this->database->prepare('SELECT `user` FROM watchers WHERE ticket=:ticket');
                 $stmt->execute([':ticket' => $ticket['aid']]);
-                foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $watcher) {
-                    if (intval($watcher['user']) !== $_SESSION['id']) {
-                        $this->database
-                            ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
-                            ->execute([':url' => "/{$project['slug']}/{$ticket['slug']}", ':user' => $watcher['user'],':ticket' => $ticket['aid'], ':content' => 'Time was tracked.']);
+                foreach ($this->watcher->ticket($ticket['aid'], $_SESSION['id']) as $watcher) {
+                    if ($this->watcher->mailable($watcher)) {
+                        //@todo
                     }
+                    $this->database
+                        ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
+                        ->execute([':url' => "/{$project['slug']}/{$ticket['slug']}", ':user' => $watcher['aid'],':ticket' => $ticket['aid'], ':content' => 'Time was tracked.']);
                 }
                 $this->database
                     ->prepare('INSERT IGNORE INTO watchers (ticket, `user`) VALUES (:id, :user)')
@@ -148,13 +150,8 @@ WHERE ticket=:ticket AND `users.aid`<>:user');
                 $stmt = $this->database->prepare('SELECT name FROM stati WHERE aid=:aid');
                 $stmt->execute([':aid' => $post['status']]);
                 $status = $stmt->fetchColumn();
-                $stmt = $this->database->prepare('SELECT `users`.*
-FROM watchers
-INNER JOIN `users` ON watchers.`user`=`users`.aid
-WHERE ticket=:ticket AND `users.aid`<>:user');
-                $stmt->execute([':ticket' => $ticket['aid'], ':user' => $_SESSION['id']]);
-                foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $watcher) {
-                    if ($watcher['email'] && $watcher['mail_valid'] === '1' && $watcher['enable_mail_update'] === '1') {
+                foreach ($this->watcher->ticket($ticket['aid'], $_SESSION['id']) as $watcher) {
+                    if ($this->watcher->mailable($watcher)) {
                         $this->mailer->send(
                             $watcher['aid'],
                             'nstatus-changed',

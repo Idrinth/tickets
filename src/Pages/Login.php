@@ -4,7 +4,7 @@ namespace De\Idrinth\Tickets\Pages;
 
 use De\Idrinth\Tickets\Twig;
 use PDO;
-use De\Idrinth\Tickets\Mailer;
+use De\Idrinth\Tickets\Services\Mailer;
 
 class Login
 {

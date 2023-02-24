@@ -2,7 +2,8 @@
 
 namespace De\Idrinth\Tickets\Commands;
 
-use De\Idrinth\Tickets\Mailer;
+use De\Idrinth\Tickets\Services\Mailer;
+use De\Idrinth\Tickets\Services\Watcher;
 use League\HTMLToMarkdown\HtmlConverter;
 use PDO;
 use PhpImap\Exceptions\ConnectionException;
@@ -14,12 +15,14 @@ class MailToTicket
     private PDO $database;
     private HtmlConverter $converter;
     private Mailer $mailer;
+    private Watcher $watcher;
 
-    public function __construct(PDO $database, HtmlConverter $converter, Mailer $mailer)
+    public function __construct(PDO $database, HtmlConverter $converter, Mailer $mailer, Watcher $watcher)
     {
         $this->converter = $converter;
         $this->database = $database;
         $this->mailer = $mailer;
+        $this->watcher = $watcher;
     }
 
     private function handleMail(IncomingMail $mail): void
@@ -54,13 +57,8 @@ class MailToTicket
                         ->prepare('INSERT INTO comments (`ticket`,`creator`,`created`,`content`) VALUES (:ticket,:user,NOW(),:content)')
                         ->execute([':ticket' => $ticket['aid'],':user' => $user,':content' => $body]);
                     $comment = $this->database->lastInsertId();
-                    $stmt = $this->database->prepare('SELECT `users`.*
-FROM watchers
-INNER JOIN `users` ON watchers.`user`=`users`.aid
-WHERE ticket=:ticket AND `users.aid`<>:user');
-                    $stmt->execute([':ticket' => $ticket['aid'],':user' => $user]);
-                    foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $watcher) {
-                        if ($watcher['email'] && $watcher['mail_valid'] === '1' && $watcher['enable_mail_update'] === '1') {
+                    foreach ($this->watcher->ticket($ticket['aid'], $user) as $watcher) {
+                        if ($this->watcher->mailable($watcher)) {
                             $this->mailer->send(
                                 $watcher['aid'],
                                 'new-comment',
@@ -116,14 +114,13 @@ WHERE ticket=:ticket AND `users.aid`<>:user');
             $this->database
                 ->prepare('UPDATE tickets SET slug=:slug WHERE aid=:id')
                 ->execute([':slug' => $slug, ':id' => $id]);
-            $stmt = $this->database->prepare("SELECT `user` FROM roles WHERE role='contributor' AND project=:project");
-            $stmt->execute([':project' => $project]);
-            foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $watcher) {
-                if (intval($watcher['user'], 10) !== $user) {
-                    $this->database
-                        ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
-                        ->execute([':url' => '/unknown/' . $slug, ':user' => $watcher['user'],':ticket' => $id, ':content' => 'A new ticket was written.']);
+            foreach ($this->watcher->project($project, $user) as $watcher) {
+                if ($this->watcher->mailable($watcher)) {
+                    //@todo
                 }
+                $this->database
+                    ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
+                    ->execute([':url' => '/unknown/' . $slug, ':user' => $watcher['user'],':ticket' => $id, ':content' => 'A new ticket was written.']);
             }
             $this->database
                 ->prepare('INSERT IGNORE INTO watchers (ticket, `user`) VALUES (:id, :user)')

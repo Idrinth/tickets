@@ -1,6 +1,6 @@
 <?php
 
-namespace De\Idrinth\Tickets;
+namespace De\Idrinth\Tickets\Services;
 
 use De\Idrinth\Tickets\Services\BlacklistHash;
 use PDO;
