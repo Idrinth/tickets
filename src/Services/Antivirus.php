@@ -20,7 +20,6 @@ class Antivirus
             error_log('Couldn\'t set data for ClamAV.');
             return false;
         }
-        sleep(5);
         $return = $this->fclean($tmp);
         unlink($tmp);
         return $return;
