@@ -13,9 +13,9 @@ class Antivirus
         $this->clam = $clam;
     }
 
-    public function clean(string $data): bool
+    public function sclean(string $data): bool
     {
-        $tmp = sys_get_temp_dir() . '/clamav-' . microtime(true);
+        $tmp = dirname(__DIR__, 2) . '/clamav-' . microtime(true);
         if (!file_put_contents($tmp, $data)) {
             error_log('Couldn\'t set data for ClamAV.');
             return false;
@@ -26,6 +26,15 @@ class Antivirus
     }
 
     public function fclean(string $file): bool
+    {
+        $tmp = dirname(__DIR__, 2) . '/clamav-' . microtime(true);
+        copy($file, $tmp);
+        $return = $this->clean($file);
+        unlink($tmp);
+        return $return;
+    }
+
+    private function clean(string $file): bool
     {
         if (!$this->clam->ping()) {
             error_log('ClamAV not found!');

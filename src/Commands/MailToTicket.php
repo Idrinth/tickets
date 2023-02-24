@@ -67,7 +67,7 @@ class MailToTicket
                 $comment = $this->database->lastInsertId();
                 if ($mail->hasAttachments()) {
                     foreach ($mail->getAttachments() as $attachment) {
-                        if ($this->av->clean($attachment->getContents())) {
+                        if ($this->av->sclean($attachment->getContents())) {
                             $this->database
                                 ->prepare('INSERT INTO uploads (`ticket`,`user`,`uploaded`,`data`,`name`) VALUES (:ticket,:user,NOW(),:data,:name)')
                                 ->execute([':ticket' => $ticket['aid'], ':user' => $user , ':data' => $attachment->getContents(), ':name' => $attachment->name]);
@@ -130,7 +130,7 @@ class MailToTicket
         $slug = base_convert("$id", 10, 36);
         if ($mail->hasAttachments()) {
             foreach ($mail->getAttachments() as $attachment) {
-                if ($this->av->clean($attachment->getContents())) {
+                if ($this->av->sclean($attachment->getContents())) {
                     $this->database
                         ->prepare('INSERT INTO uploads (`ticket`,`user`,`uploaded`,`data`,`name`) VALUES (:ticket,:user,NOW(),:data,:name)')
                         ->execute([':ticket' => $id, ':user' => $user , ':data' => $attachment->getContents(), ':name' => $attachment->name]);
