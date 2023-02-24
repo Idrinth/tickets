@@ -2,6 +2,7 @@
 
 namespace De\Idrinth\Tickets\Pages;
 
+use De\Idrinth\Tickets\Services\Mailer;
 use De\Idrinth\Tickets\Services\Watcher;
 use De\Idrinth\Tickets\Twig;
 use PDO;
@@ -11,12 +12,14 @@ class NewTicket
     private Twig $twig;
     private PDO $database;
     private Watcher $watcher;
+    private Mailer $mailer;
 
-    public function __construct(Twig $twig, PDO $database, Watcher $watcher)
+    public function __construct(Twig $twig, PDO $database, Watcher $watcher, Mailer $mailer)
     {
         $this->twig = $twig;
         $this->database = $database;
         $this->watcher = $watcher;
+        $this->mailer = $mailer;
     }
     public function run($post)
     {
