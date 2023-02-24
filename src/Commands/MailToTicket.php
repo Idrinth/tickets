@@ -62,6 +62,13 @@ class MailToTicket
                     ->prepare('INSERT INTO comments (`ticket`,`creator`,`created`,`content`) VALUES (:ticket,:user,NOW(),:content)')
                     ->execute([':ticket' => $ticket['aid'],':user' => $user,':content' => $body]);
                 $comment = $this->database->lastInsertId();
+                if ($mail->hasAttachments()) {
+                    foreach ($mail->getAttachments() as $attachment) {
+                        $this->database
+                            ->prepare('INSERT INTO uploads (`ticket`,`user`,`uploaded`,`data`,`name`) VALUES (:ticket,:user,NOW(),:data,:name)')
+                            ->execute([':ticket' => $ticket['aid'], ':user' => $user , ':data' => $attachment->getContents(), ':name' => $attachment->name]);
+                    }            
+                }
                 foreach ($this->watcher->ticket($ticket['aid'], $user) as $watcher) {
                     if ($this->watcher->mailable($watcher)) {
                         $this->mailer->send(
@@ -116,6 +123,13 @@ class MailToTicket
         $stmt->execute([':title' => $subject, ':description' => $body, ':creator' => $user,':type' => 'service',':project' => $project]);
         $id = $this->database->lastInsertId();
         $slug = base_convert("$id", 10, 36);
+        if ($mail->hasAttachments()) {
+            foreach ($mail->getAttachments() as $attachment) {
+                $this->database
+                    ->prepare('INSERT INTO uploads (`ticket`,`user`,`uploaded`,`data`,`name`) VALUES (:ticket,:user,NOW(),:data,:name)')
+                    ->execute([':ticket' => $id, ':user' => $user , ':data' => $attachment->getContents(), ':name' => $attachment->name]);
+            }            
+        }
         $this->database
             ->prepare('UPDATE tickets SET slug=:slug WHERE aid=:id')
             ->execute([':slug' => $slug, ':id' => $id]);
