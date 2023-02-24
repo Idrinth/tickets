@@ -20,6 +20,10 @@ class Antivirus
             return false;
         }
         $tmp = tempnam(sys_get_temp_dir(), 'clamav');
+        if (!$tmp) {
+            error_log('Couldn\'t prepare data for ClamAV.');
+        }
+        chmod($tmp, 0777);
         file_put_contents($tmp, $data);
         $return = $this->clam->fileScan($tmp);
         unlink($tmp);
