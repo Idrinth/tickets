@@ -45,8 +45,9 @@ class MailToTicket
                 $user = intval($this->database->lastInsertId(), 10);
             }
             $matches = [];
-            if (preg_match('/(^| |:)Ticket ([a-z0-9]+)($| )/', $subject, $matches)) {
+            if (preg_match('/(^| |:)Ticket\s+([a-z0-9]+)($| )/', $subject, $matches)) {
                 $stmt = $this->database->prepare('SELECT aid,slug FROM ticket WHERE slug=:slug');
+                var_dump($matches);exit;
                 $stmt->execute([':slug' => $matches[2]]);
                 $ticket = $stmt->fetch(PDO::FETCH_ASSOC);
                 if ($ticket) {
