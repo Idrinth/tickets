@@ -47,9 +47,9 @@ class MailToTicket
             $matches = [];
             if (preg_match('/(^| |:)Ticket\s+([a-z0-9]+)($| )/', $subject, $matches)) {
                 $stmt = $this->database->prepare('SELECT aid,slug FROM ticket WHERE slug=:slug');
-                var_dump($matches);exit;
                 $stmt->execute([':slug' => $matches[2]]);
                 $ticket = $stmt->fetch(PDO::FETCH_ASSOC);
+                var_dump($ticket);exit;
                 if ($ticket) {
                     $this->database
                         ->prepare('INSERT INTO comments (`ticket`,`creator`,`created`,`content`) VALUES (:ticket,:user,NOW(),:content)')
