@@ -2,6 +2,7 @@
 
 namespace De\Idrinth\Tickets\Services;
 
+use Generator;
 use PDO;
 
 class Watcher
