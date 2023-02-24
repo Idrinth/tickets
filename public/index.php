@@ -1,5 +1,6 @@
 <?php
 
+use De\Idrinth\Tickets\API\Attachment;
 use De\Idrinth\Tickets\API\Notification;
 use De\Idrinth\Tickets\Application;
 use De\Idrinth\Tickets\Pages\DiscordLogin;
@@ -22,6 +23,7 @@ require dirname(__DIR__) . '/vendor/autoload.php';
     ->register(new FilesystemLoader(dirname(__DIR__) . '/templates'))
     ->get('/', Home::class)
     ->get('/api/notifications', Notification::class)
+    ->get('/api/attachments/{ticket:[a-z0-9]+}/{id:[0-9]+}', Attachment::class)
     ->get('/imprint', Imprint::class)
     ->get('/discord-login', DiscordLogin::class)
     ->get('/email-login/{key:[a-z0-9A-Z]+}', MailLogin::class)
