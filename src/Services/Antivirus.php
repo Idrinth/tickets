@@ -23,6 +23,9 @@ class Antivirus
         file_put_contents($tmp, $data);
         $return = $this->clam->fileScan($tmp);
         unlink($tmp);
+        if (!$return) {
+            error_log('ClamAV found an issue with an uploaded file.');
+        }
         return $return;
     }
 }
