@@ -17,11 +17,7 @@ class NewTicket
     }
     public function run($post)
     {
-        if (!isset($_SESSION['id'])) {
-            header('Location: /login', true, 303);
-            return;
-        }
-        if (isset($post['title']) && isset($post['description']) && isset($post['type']) && isset($post['project'])) {
+        if (isset($_SESSION['id']) && isset($post['title']) && isset($post['description']) && isset($post['type']) && isset($post['project'])) {
             $stmt = $this->database->prepare("SELECT aid FROM projects WHERE slug=:slug");
             $stmt->execute(['slug' => $post['project']]);
             $project = $stmt->fetchColumn();
@@ -47,6 +43,6 @@ class NewTicket
             header('Location: /'.$post['project'].'/'.$slug, true, 303);
             return;
         }
-        return $this->twig->render('new', ['title' => 'New Ticket']);
+        return $this->twig->render('new', ['title' => 'New Ticket', 'targetmail' => $_ENV['MAIL_FROM_MAIL']]);
     }
 }
