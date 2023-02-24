@@ -19,7 +19,7 @@ class Watcher
         $stmt = $this->database->prepare('SELECT `users`.*
 FROM watchers
 INNER JOIN `users` ON watchers.`user`=`users`.aid
-WHERE ticket=:ticket AND `users.aid`<>:user');
+WHERE ticket=:ticket AND `users`.`aid`<>:user');
         $stmt->execute([':ticket' => $ticket, ':user' => $user]);
         foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $watcher) {
             yield $watcher;
