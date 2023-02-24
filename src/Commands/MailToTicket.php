@@ -2,6 +2,8 @@
 
 namespace De\Idrinth\Tickets\Commands;
 
+use De\Idrinth\Tickets\Mailer;
+use League\HTMLToMarkdown\HtmlConverter;
 use PDO;
 use PhpImap\Exceptions\ConnectionException;
 use PhpImap\Mailbox;
@@ -12,7 +14,7 @@ class MailToTicket
     private HtmlConverter $converter;
     private Mailer $mailer;
 
-    public function __construct(PDO $database, HtmlConverter $converter, \De\Idrinth\Tickets\Mailer $mailer)
+    public function __construct(PDO $database, HtmlConverter $converter, Mailer $mailer)
     {
         $this->converter = $converter;
         $this->database = $database;
