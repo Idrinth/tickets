@@ -15,8 +15,10 @@ class Attachment
     public function run($post, $slug, $id)
     {
         header('Content-Type: application/octet-stream', true);
-        $stmt = $this->database->prepare('SELECT `data` FROM uploads WHERE aid=:id AND `ticket` IN (SELECT aid FROM tickets WHERE slug=:slug)');
+        $stmt = $this->database->prepare('SELECT `data`,name FROM uploads WHERE aid=:id AND `ticket` IN (SELECT aid FROM tickets WHERE slug=:slug)');
         $stmt->execute([':id' => $id, ':slug' => $slug]);
-        return $stmt->fetchColumn();
+        $file = $stmt->fetch(PDO::FETCH_ASSOC);
+        header('Content-Disposition: attachment; filename="' . $file['name'] . '"');
+        return $file['data'];
     }
 }
