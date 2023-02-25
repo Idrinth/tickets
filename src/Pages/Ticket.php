@@ -293,6 +293,12 @@ class Ticket
         $stmt2->execute([':ticket' => $ticket['aid']]);
         $stmt3 = $this->database->prepare('SELECT `aid`,`uploaded`,`name` FROM uploads WHERE ticket=:ticket');
         $stmt3->execute([':ticket' => $ticket['aid']]);
+        $stmt4 = $this->database->prepare('SELECT `users`.`aid`,`users`.`display`,IF(assignees.ticket, 1, 0) AS assigned
+FROM roles
+INNER JOIN `users` ON `users`.aid=roles.`user`
+LEFT JOIN assignees ON assignees.`user`=`users`.aid AND assignees.ticket=:ticket
+WHERE roles.project=:project AND roles.role="contributor"');
+        $stmt4->execute([':ticket' => $ticket['project'], ':ticket' => $ticket['aid']]);
         return $this->twig->render(
             'ticket',
             [
@@ -308,6 +314,7 @@ class Ticket
                 'isUpvoter' => $isUpvoter,
                 'watchers' => $stmt2->fetchAll(PDO::FETCH_ASSOC),
                 'attachments' => $stmt3->fetchAll(PDO::FETCH_ASSOC),
+                'assignees' => $stmt4->fetchAll(PDO::FETCH_COLUMN),
             ]
         );
     }
