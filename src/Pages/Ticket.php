@@ -242,6 +242,11 @@ class Ticket
                         ->prepare('INSERT IGNORE INTO watchers (ticket, `user`) VALUES (:id, :user)')
                         ->execute([':id' => $ticket['aid'], ':user' => $assignee]);
                 }
+                $stmt = $this->database->prepare('SELECT `users`.`aid`,`users`.`display`
+FROM `users`
+INNER JOIN assignees ON assignees.`user`=`users`.aid AND assignees.ticket=:ticket');
+                $stmt->execute([':ticket' => $ticket['aid']]);
+                $assignees = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 foreach ($this->watcher->ticket($ticket['aid'], $_SESSION['id']) as $watcher) {
                     if ($this->watcher->mailable($watcher)) {
                         $this->mailer->send(
@@ -252,7 +257,7 @@ class Ticket
                                 'ticket' => $ticket['slug'],
                                 'name' => $watcher['display'],
                                 'project' => $project['slug'],
-                                'unlisted' => $post['unlisted'],
+                                'assignees' => $assignees,
                             ],
                             "Assignees changed for Ticket {$ticket['slug']}",
                             $watcher['email'],
@@ -267,11 +272,6 @@ class Ticket
                 $this->database
                     ->prepare('UPDATE tickets SET `private`=:private WHERE aid=:aid')
                     ->execute([':private' => $post['unlisted'],':aid' => $ticket['aid']]);
-                $stmt = $this->database->prepare('SELECT `users`.`aid`,`users`.`display`
-FROM `users`
-INNER JOIN assignees ON assignees.`user`=`users`.aid AND assignees.ticket=:ticket');
-                $stmt->execute([':ticket' => $ticket['aid']]);
-                $assignees = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 foreach ($this->watcher->ticket($ticket['aid'], $_SESSION['id']) as $watcher) {
                     if ($this->watcher->mailable($watcher)) {
                         $this->mailer->send(
@@ -282,7 +282,7 @@ INNER JOIN assignees ON assignees.`user`=`users`.aid AND assignees.ticket=:ticke
                                 'ticket' => $ticket['slug'],
                                 'name' => $watcher['display'],
                                 'project' => $project['slug'],
-                                'assignees' => $assignees,
+                                'unlisted' => $post['unlisted'],
                             ],
                             "Visibility change for Ticket {$ticket['slug']}",
                             $watcher['email'],
