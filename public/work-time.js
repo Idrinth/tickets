@@ -8,15 +8,15 @@
         return;
     }
     let started = 0;
-    let interval;
+    let interval = 0;
     button.onclick = () => {
-        if (interval) {
+        if (interval > 0) {
             window.clearInterval(interval);
             interval = 0;
             return;
         }
         started = Date.now();
-        window.setInterval(() => {
+        interval = window.setInterval(() => {
             const diff = Date.now() - started;
             const min = Math.floor(diff/1000/60);
             const sec = Math.floor(diff/1000)%60;
