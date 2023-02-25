@@ -1,8 +1,17 @@
-Visibility changed at {{ hostname }}
+Assignees changed at {{ hostname }}
 
 Hello {{ name }}
 
-The visibility of your ticket at https://{{ hostname }}/{{ project }}/{{ ticket }} was changed to {% if unlisted=='1' %}unlisted{% else %}listed{% endif %}.
+The assignees of your ticket at https://{{ hostname }}/{{ project }}/{{ ticket }} were changed to:
+
+{% if not assignees or assignees.length == 0 %}
+- Noone - unassigned
+{% else %}
+{% for assignee in assignees %}
+- {{ assignee.display }}{{ "\n" }}
+{% endfor %}
+{% endif %}
+
 If you want to add something, just answer to this mail without changing the subject.
 Have a great day,
 Your Ticket-Bot

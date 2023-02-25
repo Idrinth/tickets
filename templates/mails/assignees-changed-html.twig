@@ -1,13 +1,20 @@
 <!DOCTYPE HTML>
 <html>
     <head>
-        <title>Visibility changed at {{ hostname }}</title>
+        <title>Assignees changed at {{ hostname }}</title>
         <meta charset="utf-8"/>
     </head>
     <body>
-        <h1>Visibility changed at {{ hostname }}</h1>
+        <h1>Assignees changed at {{ hostname }}</h1>
         <p>Hello {{ name }}</p>
-        <p>The visibility of your ticket at <a href="https://{{ hostname }}/{{ project }}/{{ ticket }}">{{ hostname }}/{{ project.slug }}/{{ ticket }}</a> was changed to {% if unlisted=='1' %}unlisted{% else %}listed{% endif %}.</p>
+        <p>The assignees of your ticket at <a href="https://{{ hostname }}/{{ project }}/{{ ticket }}">{{ hostname }}/{{ project }}/{{ ticket }}</a> were changed to</p>
+        <ul>{% if not assignees or assignees.length == 0 %}
+            <li>Noone - unassigned</li>
+        {% else %}
+            {% for assignee in assignees %}
+                <li>{{ assignee.display }}</li>
+            {% endfor %}
+        {% endif %}</ul>
         <p>If you want to add something, just answer to this mail without changing the subject.</p>
         <p>Have a great day,<br/>Your Ticket-Bot</p>
         <br/>

@@ -231,11 +231,47 @@ class Ticket
                     ->execute([':id' => $ticket['aid'], ':user' => $_SESSION['id']]);
                 $wasModified=true;
             } elseif($isContributor && isset($post['assignees'])) {
-                var_dump($post);
+                $this->database
+                    ->prepare('DELETE FROM assignees WHERE ticket=:ticker')
+                    ->execute([':ticket' => $ticket['aid']]);
+                foreach ($post['assignees'] as $assignee) {
+                    $this->database
+                        ->prepare('INSERT INTO assignees (`ticket`,`user`) VALUES (:ticker,:user)')
+                        ->execute([':ticket' => $ticket['aid'], ':user' => $assignee]);
+                    $this->database
+                        ->prepare('INSERT IGNORE INTO watchers (ticket, `user`) VALUES (:id, :user)')
+                        ->execute([':id' => $ticket['aid'], ':user' => $assignee]);
+                }
+                foreach ($this->watcher->ticket($ticket['aid'], $_SESSION['id']) as $watcher) {
+                    if ($this->watcher->mailable($watcher)) {
+                        $this->mailer->send(
+                            $watcher['aid'],
+                            'assignees-changed',
+                            [
+                                'hostname' => $_ENV['SYSTEM_HOSTNAME'],
+                                'ticket' => $ticket['slug'],
+                                'name' => $watcher['display'],
+                                'project' => $project['slug'],
+                                'unlisted' => $post['unlisted'],
+                            ],
+                            "Assignees changed for Ticket {$ticket['slug']}",
+                            $watcher['email'],
+                            $watcher['display']
+                        );
+                    }
+                    $this->database
+                        ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
+                        ->execute([':url' => "/{$project['slug']}/{$ticket['slug']}", ':user' => $watcher['user'],':ticket' => $ticket['aid'], ':content' => 'Assignees were changed.']);
+                }
             } elseif($isContributor && isset($post['unlisted'])) {
                 $this->database
                     ->prepare('UPDATE tickets SET `private`=:private WHERE aid=:aid')
                     ->execute([':private' => $post['unlisted'],':aid' => $ticket['aid']]);
+                $stmt = $this->database->prepare('SELECT `users`.`aid`,`users`.`display`
+FROM `users`
+INNER JOIN assignees ON assignees.`user`=`users`.aid AND assignees.ticket=:ticket');
+                $stmt->execute([':ticket' => $ticket['aid']]);
+                $assignees = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 foreach ($this->watcher->ticket($ticket['aid'], $_SESSION['id']) as $watcher) {
                     if ($this->watcher->mailable($watcher)) {
                         $this->mailer->send(
@@ -246,7 +282,7 @@ class Ticket
                                 'ticket' => $ticket['slug'],
                                 'name' => $watcher['display'],
                                 'project' => $project['slug'],
-                                'unlisted' => $post['unlisted'],
+                                'assignees' => $assignees,
                             ],
                             "Visibility change for Ticket {$ticket['slug']}",
                             $watcher['email'],
