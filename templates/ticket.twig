@@ -5,7 +5,7 @@
     <p>Modified: {{ ticket.modified }}</p>
     <form method="post">
         <label for="assignees">Assigned to</label>
-        <select id="assignees" name="assignees" multiple{% if not isContributor %} disabled{% endif %}>
+        <select id="assignees" name="assignees[]" multiple{% if not isContributor %} disabled{% endif %}>
             {% for assignee in assignees %}
                 <option value="{{ assignee.aid }}"{% if assignee.assigned=='1' %} selected{% endif %}>{{ assignee.display }}</option>
             {% endfor %}
