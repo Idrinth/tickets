@@ -230,6 +230,8 @@ class Ticket
                     ->prepare('INSERT IGNORE INTO watchers (ticket, `user`) VALUES (:id, :user)')
                     ->execute([':id' => $ticket['aid'], ':user' => $_SESSION['id']]);
                 $wasModified=true;
+            } elseif($isContributor && isset($post['assignees'])) {
+                var_dump($post);
             } elseif($isContributor && isset($post['unlisted'])) {
                 $this->database
                     ->prepare('UPDATE tickets SET `private`=:private WHERE aid=:aid')
@@ -314,7 +316,7 @@ WHERE roles.project=:project AND roles.role="contributor"');
                 'isUpvoter' => $isUpvoter,
                 'watchers' => $stmt2->fetchAll(PDO::FETCH_ASSOC),
                 'attachments' => $stmt3->fetchAll(PDO::FETCH_ASSOC),
-                'assignees' => $stmt4->fetchAll(PDO::FETCH_COLUMN),
+                'assignees' => $stmt4->fetchAll(PDO::FETCH_ASSOC),
             ]
         );
     }
