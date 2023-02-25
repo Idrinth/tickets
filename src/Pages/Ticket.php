@@ -232,7 +232,7 @@ class Ticket
                 $wasModified=true;
             } elseif($isContributor && isset($post['assignees'])) {
                 $this->database
-                    ->prepare('DELETE FROM assignees WHERE ticket=:ticker')
+                    ->prepare('DELETE FROM assignees WHERE ticket=:ticket')
                     ->execute([':ticket' => $ticket['aid']]);
                 foreach ($post['assignees'] as $assignee) {
                     $this->database
