@@ -10,6 +10,7 @@ use De\Idrinth\Tickets\Pages\Home;
 use De\Idrinth\Tickets\Pages\Imprint;
 use De\Idrinth\Tickets\Pages\Login;
 use De\Idrinth\Tickets\Pages\MailLogin;
+use De\Idrinth\Tickets\Pages\MyTickets;
 use De\Idrinth\Tickets\Pages\NewTicket;
 use De\Idrinth\Tickets\Pages\Profile;
 use De\Idrinth\Tickets\Pages\Project;
@@ -26,6 +27,7 @@ require dirname(__DIR__) . '/vendor/autoload.php';
     ->get('/', Home::class)
     ->get('/api/notifications', Notification::class)
     ->get('/api/attachments/{ticket:[a-z0-9]+}/{id:[0-9]+}', Attachment::class)
+    ->get('/my-tickets', MyTickets::class)
     ->get('/imprint', Imprint::class)
     ->get('/discord-login', DiscordLogin::class)
     ->get('/email-login/{key:[a-z0-9A-Z]+}', MailLogin::class)

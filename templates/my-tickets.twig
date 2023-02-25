@@ -1,0 +1,36 @@
+{% include 'header.twig' %}
+<h2>My Tickets</h2>
+<p>See all tickets created by you or assigned to you below.</p>
+<div class="board">
+    <div class="column">
+        <h3>{{ newTickets | length }} New</h3>
+        {% for ticket in newTickets %}
+        <div class="ticket {{ ticket.type }}">
+            <h4>{{ ticket.creator.display }}: <a href="/{{ ticket.project.slug }}/{{ ticket.slug }}">{{ ticket.title }}</a> +{{ ticket.upvotes }}</h4>
+            <p><a href="/{{ ticket.project.slug }}">{{ ticket.project.name }}</a></p>
+            <p>{{ ticket.type }}: {{ ticket.status.name }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="column">
+        <h3>{{ wipTickets | length }} WIP</h3>
+        {% for ticket in wipTickets %}
+        <div class="ticket {{ ticket.type }}">
+            <h4>{{ ticket.creator.display }}: <a href="/{{ ticket.project.slug }}/{{ ticket.slug }}">{{ ticket.title }}</a> +{{ ticket.upvotes }}</h4>
+            <p><a href="/{{ ticket.project.slug }}">{{ ticket.project.name }}</a></p>
+            <p>{{ ticket.type }}: {{ ticket.status.name }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="column">
+        <h3>{{ doneTickets | length }} Done</h3>
+        {% for ticket in doneTickets %}
+        <div class="ticket {{ ticket.type }}">
+            <h4>{{ ticket.creator.display }}: <a href="/{{ ticket.project.slug }}/{{ ticket.slug }}">{{ ticket.title }}</a> +{{ ticket.upvotes }}</h4>
+            <p><a href="/{{ ticket.project.slug }}">{{ ticket.project.name }}</a></p>
+            <p>{{ ticket.type }}: {{ ticket.status.name }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% include 'footer.twig' %}
