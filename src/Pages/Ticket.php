@@ -266,7 +266,7 @@ INNER JOIN assignees ON assignees.`user`=`users`.aid AND assignees.ticket=:ticke
                     }
                     $this->database
                         ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
-                        ->execute([':url' => "/{$project['slug']}/{$ticket['slug']}", ':user' => $watcher['user'],':ticket' => $ticket['aid'], ':content' => 'Assignees were changed.']);
+                        ->execute([':url' => "/{$project['slug']}/{$ticket['slug']}", ':user' => $watcher['aid'],':ticket' => $ticket['aid'], ':content' => 'Assignees were changed.']);
                 }
                 $wasModified = true;
             } elseif($isContributor && isset($post['unlisted'])) {
@@ -292,7 +292,7 @@ INNER JOIN assignees ON assignees.`user`=`users`.aid AND assignees.ticket=:ticke
                     }
                     $this->database
                         ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
-                        ->execute([':url' => "/{$project['slug']}/{$ticket['slug']}", ':user' => $watcher['user'],':ticket' => $ticket['aid'], ':content' => 'Visibility was changed.']);
+                        ->execute([':url' => "/{$project['slug']}/{$ticket['slug']}", ':user' => $watcher['aid'],':ticket' => $ticket['aid'], ':content' => 'Visibility was changed.']);
                 }
                 $this->database
                     ->prepare('INSERT IGNORE INTO watchers (ticket, `user`) VALUES (:id, :user)')
