@@ -14,11 +14,13 @@ class Attachment
     }
     public function run($post, $slug, $id)
     {
-        header('Content-Type: application/octet-stream', true);
-        $stmt = $this->database->prepare('SELECT `data`,name FROM uploads WHERE aid=:id AND `ticket` IN (SELECT aid FROM tickets WHERE slug=:slug)');
+        $stmt = $this->database->prepare('SELECT `data`,name,mime FROM uploads WHERE aid=:id AND `ticket` IN (SELECT aid FROM tickets WHERE slug=:slug)');
         $stmt->execute([':id' => $id, ':slug' => $slug]);
         $file = $stmt->fetch(PDO::FETCH_ASSOC);
-        header('Content-Disposition: attachment; filename="' . $file['name'] . '"');
+        header('Content-Type: ' . $file['mime'], true);
+        if (!in_array($file['mime'], ['image/png', 'image/jpeg', 'image/gif'], true)) {
+            header('Content-Disposition: attachment; filename="' . $file['name'] . '"');
+        }
         return $file['data'];
     }
 }

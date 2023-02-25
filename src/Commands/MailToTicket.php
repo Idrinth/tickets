@@ -4,6 +4,7 @@ namespace De\Idrinth\Tickets\Commands;
 
 use De\Idrinth\Tickets\Services\Antivirus;
 use De\Idrinth\Tickets\Services\Mailer;
+use De\Idrinth\Tickets\Services\MimeTypeDetector;
 use De\Idrinth\Tickets\Services\Watcher;
 use League\HTMLToMarkdown\HtmlConverter;
 use PDO;
@@ -72,10 +73,18 @@ class MailToTicket
                 $comment = $this->database->lastInsertId();
                 if ($mail->hasAttachments()) {
                     foreach ($mail->getAttachments() as $attachment) {
-                        if ($this->av->sclean($attachment->getContents())) {
+                        $data = $attachment->getContents();
+                        if ($this->av->sclean($data)) {
                             $this->database
-                                ->prepare('INSERT INTO uploads (`ticket`,`user`,`uploaded`,`data`,`name`) VALUES (:ticket,:user,NOW(),:data,:name)')
-                                ->execute([':ticket' => $ticket['aid'], ':user' => $user , ':data' => $attachment->getContents(), ':name' => $attachment->name]);
+                                ->prepare('INSERT INTO uploads (`ticket`,`user`,`uploaded`,`data`,`name`, `hash`,`mime`) VALUES (:ticket,:user,NOW(),:data,:name,:hash,:mime)')
+                                ->execute([
+                                    ':ticket' => $ticket['aid'],
+                                    ':user' => $user ,
+                                    ':data' => $data,
+                                    ':name' => $attachment->name,
+                                    ':hash' => md5($data),
+                                    ':mime' => MimeTypeDetector::detect($data),
+                                ]);
                         }
                     }            
                 }
@@ -135,10 +144,18 @@ class MailToTicket
         $slug = base_convert("$id", 10, 36);
         if ($mail->hasAttachments()) {
             foreach ($mail->getAttachments() as $attachment) {
-                if ($this->av->sclean($attachment->getContents())) {
+                $data = $attachment->getContents();
+                if ($this->av->sclean($data)) {
                     $this->database
-                        ->prepare('INSERT INTO uploads (`ticket`,`user`,`uploaded`,`data`,`name`) VALUES (:ticket,:user,NOW(),:data,:name)')
-                        ->execute([':ticket' => $id, ':user' => $user , ':data' => $attachment->getContents(), ':name' => $attachment->name]);
+                        ->prepare('INSERT INTO uploads (`ticket`,`user`,`uploaded`,`data`,`name`, `hash`,`mime`) VALUES (:ticket,:user,NOW(),:data,:name,:hash,:mime)')
+                        ->execute([
+                            ':ticket' => $ticket['aid'],
+                            ':user' => $user ,
+                            ':data' => $data,
+                            ':name' => $attachment->name,
+                            ':hash' => md5($data),
+                            ':mime' => MimeTypeDetector::detect($data),
+                        ]);
                 }
             }            
         }

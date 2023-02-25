@@ -84,9 +84,17 @@ class Ticket
             $isContributor = $stmt->fetchColumn()==='contributor';
             if (isset($_FILES['file']) && isset($_FILES['file']['tmp_name']) && $_FILES['file']['tmp_name'] && !$isDone) {
                 if ($this->av->fclean($_FILES['file']['tmp_name'])) {
+                    $data = file_get_contents($_FILES['file']['tmp_name']);
                     $this->database
-                        ->prepare('INSERT INTO uploads (`ticket`,`user`,`uploaded`,`data`,`name`) VALUES (:ticket,:user,NOW(),:data,:name)')
-                        ->execute([':ticket' => $ticket['aid'], ':user' => $_SESSION['id'] , ':data' => file_get_contents($_FILES['file']['tmp_name']), ':name' => basename($_FILES['file']['name'])]);
+                        ->prepare('INSERT INTO uploads (`ticket`,`user`,`uploaded`,`data`,`name`,`hash`,`mime`) VALUES (:ticket,:user,NOW(),:data,:name,:hash,:mime)')
+                        ->execute([
+                            ':ticket' => $ticket['aid'],
+                            ':user' => $_SESSION['id'],
+                            ':data' => $data,
+                            ':name' => basename($_FILES['file']['name']),
+                            ':hash' => md5($data),
+                            ':mime' => MimeTypeDetector::detect($data),
+                        ]);
                 }
                 $wasModified = true;
             } elseif (isset($post['content'])) {
