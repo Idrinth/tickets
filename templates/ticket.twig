@@ -101,7 +101,7 @@
             <select id="task" name="task">
                 {% for status in stati %}
                     {% if status.type == 'wip' %}
-                        <option value="{{ status.aid }}">{{ status.name }}</option>
+                        <option value="{{ status.aid }}"{% if status.aid==ticket.status %} selected{% endif %}>{{ status.name }}</option>
                     {% endif %}
                 {% endfor %}
             </select>
