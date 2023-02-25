@@ -5,14 +5,14 @@
     <p>Modified: {{ ticket.modified }}</p>
     <form method="post">
         <label for="assignees">Assigned to</label>
-        <select id="assignees" name="assignees[]" multiple{% if not isContributor %} disabled{% endif %}>
+        <select id="assignees" name="assignees[]" multiple{% if not isContributor or isDone %} disabled{% endif %}>
             {% for assignee in assignees %}
                 <option value="{{ assignee.aid }}"{% if assignee.assigned=='1' %} selected{% endif %}>{{ assignee.display }}</option>
             {% endfor %}
         </select>
-        {% if isContributor %}<button type="select">Assign</button>{% endif %}
+        {% if isContributor and not isDone %}<button type="select">Assign</button>{% endif %}
     </form>
-    {% if isContributor %}
+    {% if isContributor and not isDone %}
         <form method="post" onchange="this.submit();">
             <label for="unlisted">Unlisted?</label>
             <input type="checkbox" value="1"{% if ticket.private=='1' %} checked{% endif %} name="unlisted" id="unlisted"/>
@@ -21,9 +21,9 @@
         <p>Unlisted: {% if ticket.private=='1' %}Yes{% else %}No{% endif %}</p>
     {% endif %}
     <p>Watchers: <ul>{% for user in watchers %}<li>{{ users[user.user] }}</li>{% endfor %}</ul>
-    {% if user is not empty and user.aid > 0 %}<form method="post"><input type="hidden" name="watch" value="1"/><button type="submit">watch</button></form>{% endif %}
+    {% if user is not empty and user.aid > 0 and not isDone %}<form method="post"><input type="hidden" name="watch" value="1"/><button type="submit">watch</button></form>{% endif %}
     <p>Upvotes: {{ upvotes }}</p>
-    {% if user is not empty and user.aid > 0 %}<form method="post"><input type="hidden" name="vote" value="1"/><button type="submit">{% if isUpvoter %}Downvote{% else %}Upvote{% endif %}</button></form>{% endif %}
+    {% if user is not empty and user.aid > 0 and not isDone %}<form method="post"><input type="hidden" name="vote" value="1"/><button type="submit">{% if isUpvoter %}Downvote{% else %}Upvote{% endif %}</button></form>{% endif %}
     {% if isContributor %}
         <form method="post" onchange="this.submit();">
             <label for="status">Status</label>
@@ -54,7 +54,7 @@
     {% else %}
         <p>Status: {{ stati[ticket.status].name }}({{ stati[ticket.status].type }})</p>
     {% endif %}
-    {% if isContributor %}
+    {% if isContributor and not isDone %}
         <form method="post" onchange="this.submit();">
             <label for="project">Project</label>
             <select name="project" id="project">
@@ -92,7 +92,7 @@
     {% for time in times %}
         <li>On {{ time.day}} {{ users[time.user] }}: {{ time.name }} for {{ time.duration | date('H:i') }}</li>
     {% endfor %}
-    {% if isContributor %}
+    {% if isContributor and not isDone %}
     <li>
         <form method="post">
             <label for="duration">Duration</label>
@@ -117,7 +117,7 @@
         <strong title="{{ attachment.uploaded }}"><a href="/api/attachments/{{ ticket.slug }}/{{ attachment.aid }}">{{ attachment.name }}</a></strong>
     </li>
 {% endfor %}
-{% if user is not empty and user.aid > 0 %}
+{% if user is not empty and user.aid > 0 and not isDone %}
     <li class="attachment">
         <form method="post" enctype="multipart/form-data">
             <label for="file">Your file</label>

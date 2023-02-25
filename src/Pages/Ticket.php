@@ -61,6 +61,11 @@ class Ticket
         $isContributor = false;
         $wasModified=false;
         $isUpvoter = false;
+        $stati = [];
+        foreach ($this->database->query("SELECT * FROM stati")->fetchAll(PDO::FETCH_ASSOC) as $status) {
+            $stati[$status['aid']] = $status;
+        }
+        $isDone = $stati[$ticket['status']]['type'] === 'done';
         if (isset($_SESSION['id'])) {
             if ($_SESSION['id'] === 1) {
                 $this->database
@@ -77,7 +82,7 @@ class Ticket
             $stmt = $this->database->prepare('SELECT `role` FROM roles WHERE project=:project AND `user`=:user');
             $stmt->execute([':project' => $project['aid'], ':user' => $_SESSION['id']]);
             $isContributor = $stmt->fetchColumn()==='contributor';
-            if (isset($_FILES['file']) && isset($_FILES['file']['tmp_name']) && $_FILES['file']['tmp_name']) {
+            if (isset($_FILES['file']) && isset($_FILES['file']['tmp_name']) && $_FILES['file']['tmp_name'] && !$isDone) {
                 if ($this->av->fclean($_FILES['file']['tmp_name'])) {
                     $this->database
                         ->prepare('INSERT INTO uploads (`ticket`,`user`,`uploaded`,`data`,`name`) VALUES (:ticket,:user,NOW(),:data,:name)')
@@ -85,6 +90,11 @@ class Ticket
                 }
                 $wasModified = true;
             } elseif (isset($post['content'])) {
+                if ($isDone) {
+                    $this->database
+                        ->prepare('UPDATE `tickets` SET `status`=:status WHERE aid=:aid')
+                        ->execute([':aid' => $ticket['aid'], ':status' => $_ENV['STATUS_ID_REOPENED']]);
+                }
                 $this->database
                     ->prepare('INSERT INTO comments (`ticket`,`creator`,`created`,`content`) VALUES (:ticket,:user,NOW(),:content)')
                     ->execute([':ticket' => $ticket['aid'],':user' => $_SESSION['id'],':content' => $post['content']]);
@@ -117,7 +127,7 @@ class Ticket
                     ->prepare('INSERT IGNORE INTO watchers (ticket, `user`) VALUES (:id, :user)')
                     ->execute([':id' => $ticket['aid'], ':user' => $_SESSION['id']]);
                 $wasModified=true;
-            } elseif (isset($post['vote'])) {
+            } elseif (isset($post['vote']) && !$isDone) {
                 if ($isUpvoter) {
                     $this->database
                         ->prepare('DELETE FROM upvotes WHERE `user`=:user AND `ticket`=:ticket')
@@ -130,7 +140,7 @@ class Ticket
                     $isUpvoter = true;
                 }
                 $wasModified=true;
-            } elseif (isset($post['watch'])) {
+            } elseif (isset($post['watch']) && !$isDone) {
                 $this->database
                     ->prepare('INSERT IGNORE INTO watchers (ticket, `user`) VALUES (:id, :user)')
                     ->execute([':id' => $ticket['aid'], ':user' => $_SESSION['id']]);
@@ -199,7 +209,7 @@ class Ticket
                     ->prepare('INSERT IGNORE INTO watchers (ticket, `user`) VALUES (:id, :user)')
                     ->execute([':id' => $ticket['aid'], ':user' => $_SESSION['id']]);
                 $wasModified=true;
-            } elseif($isContributor && isset($post['project'])) {
+            } elseif($isContributor && isset($post['project']) && !$isDone) {
                 $stmt = $this->database->prepare('SELECT * FROM projects WHERE slug=:slug');
                 $stmt->execute([':slug' => $post['project']]);
                 $project = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -230,7 +240,7 @@ class Ticket
                     ->prepare('INSERT IGNORE INTO watchers (ticket, `user`) VALUES (:id, :user)')
                     ->execute([':id' => $ticket['aid'], ':user' => $_SESSION['id']]);
                 $wasModified=true;
-            } elseif($isContributor && isset($post['assignees'])) {
+            } elseif($isContributor && isset($post['assignees']) && !$isDone) {
                 $this->database
                     ->prepare('DELETE FROM assignees WHERE ticket=:ticket')
                     ->execute([':ticket' => $ticket['aid']]);
@@ -269,7 +279,7 @@ INNER JOIN assignees ON assignees.`user`=`users`.aid AND assignees.ticket=:ticke
                         ->execute([':url' => "/{$project['slug']}/{$ticket['slug']}", ':user' => $watcher['aid'],':ticket' => $ticket['aid'], ':content' => 'Assignees were changed.']);
                 }
                 $wasModified = true;
-            } elseif($isContributor && isset($post['unlisted'])) {
+            } elseif($isContributor && isset($post['unlisted']) && !$isDone) {
                 $this->database
                     ->prepare('UPDATE tickets SET `private`=:private WHERE aid=:aid')
                     ->execute([':private' => $post['unlisted'],':aid' => $ticket['aid']]);
@@ -322,10 +332,6 @@ INNER JOIN assignees ON assignees.`user`=`users`.aid AND assignees.ticket=:ticke
         foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $us) {
             $users[$us['aid']] = $us['display'];
         }
-        $stati = [];
-        foreach ($this->database->query("SELECT * FROM stati")->fetchAll(PDO::FETCH_ASSOC) as $status) {
-            $stati[$status['aid']] = $status;
-        }
         $stmt = $this->database->prepare('SELECT COUNT(*) FROM upvotes WHERE ticket=:ticket');
         $stmt->execute([':ticket' => $ticket['aid']]);
         $stmt2 = $this->database->prepare('SELECT `user` FROM watchers WHERE ticket=:ticket');
@@ -354,6 +360,7 @@ WHERE roles.project=:project AND roles.role="contributor"');
                 'watchers' => $stmt2->fetchAll(PDO::FETCH_ASSOC),
                 'attachments' => $stmt3->fetchAll(PDO::FETCH_ASSOC),
                 'assignees' => $stmt4->fetchAll(PDO::FETCH_ASSOC),
+                'isDone' => $isDone
             ]
         );
     }

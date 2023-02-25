@@ -57,10 +57,15 @@ class MailToTicket
             ->execute([':user' => $user]);
         $matches = [];
         if (preg_match('/(^| |:)Ticket\s+([a-z0-9]+)($| )/', $subject, $matches)) {
-            $stmt = $this->database->prepare('SELECT aid,slug FROM tickets WHERE slug=:slug');
+            $stmt = $this->database->prepare('SELECT tickets.aid,tickets.slug,stati.`type` FROM tickets INNER JOIN stati ON tickets.`status`=stati.aid WHERE slug=:slug');
             $stmt->execute([':slug' => $matches[2]]);
             $ticket = $stmt->fetch(PDO::FETCH_ASSOC);
             if ($ticket) {
+                if ($ticket['type'] === 'done') {
+                    $this->database
+                        ->prepare('UPDATE `tickets` SET `status`=:status WHERE aid=:aid')
+                        ->execute([':aid' => $ticket['aid'], ':status' => $_ENV['STATUS_ID_REOPENED']]);
+                }
                 $this->database
                     ->prepare('INSERT INTO comments (`ticket`,`creator`,`created`,`content`) VALUES (:ticket,:user,NOW(),:content)')
                     ->execute([':ticket' => $ticket['aid'],':user' => $user,':content' => $body]);
@@ -122,7 +127,7 @@ class MailToTicket
         }
         $project = 0;
         if (stripos($subject, 'blacklist') !== false || stripos($subject, 'OptOut') !== false || stripos($subject, 'opt-out') !== false) {
-            $project = 31;
+            $project = intval($_ENV['PROJECT_ID_BLACKLISTING'], 10);
         }
         $stmt = $this->database->prepare("INSERT INTO tickets (`title`,`description`,`creator`,`type`,`status`,`created`,`modified`,`project`) VALUES (:title,:description,:creator,:type,1,NOW(),NOW(),:project)");
         $stmt->execute([':title' => $subject, ':description' => $body, ':creator' => $user,':type' => 'service',':project' => $project]);
