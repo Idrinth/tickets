@@ -18,9 +18,17 @@
         started = Date.now();
         interval = window.setInterval(() => {
             const diff = Date.now() - started;
-            const min = Math.floor(diff/1000/60);
-            const sec = Math.floor(diff/1000)%60;
-            duration.value = `${min}:${sec}`;
+            const hour = Math.floor(diff/1000/60/60);
+            const min = Math.floor(diff/1000/60)%60;
+            if (min < 10 && hour < 10) {
+                duration.value = `0${hour}:0${min}:${sec}`;
+            } else if (min < 10) {
+                duration.value = `${hour}:0${min}:${sec}`;
+            } else if (hour < 10) {
+                duration.value = `0${hour}:${min}:${sec}`;
+            } else {
+                duration.value = `${hour}:${min}:${sec}`;
+            }
         }, 100);
     }
 })();
