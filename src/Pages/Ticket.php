@@ -268,6 +268,7 @@ INNER JOIN assignees ON assignees.`user`=`users`.aid AND assignees.ticket=:ticke
                         ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
                         ->execute([':url' => "/{$project['slug']}/{$ticket['slug']}", ':user' => $watcher['user'],':ticket' => $ticket['aid'], ':content' => 'Assignees were changed.']);
                 }
+                $wasModified = true;
             } elseif($isContributor && isset($post['unlisted'])) {
                 $this->database
                     ->prepare('UPDATE tickets SET `private`=:private WHERE aid=:aid')
