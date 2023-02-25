@@ -242,7 +242,7 @@ class Ticket
                         ->prepare('INSERT IGNORE INTO watchers (ticket, `user`) VALUES (:id, :user)')
                         ->execute([':id' => $ticket['aid'], ':user' => $assignee]);
                 }
-                $stmt = $this->database->prepare('SELECT `users`.`aid`,`users`.`display`
+                $stmt = $this->database->prepare('SELECT `users`.`display`
 FROM `users`
 INNER JOIN assignees ON assignees.`user`=`users`.aid AND assignees.ticket=:ticket');
                 $stmt->execute([':ticket' => $ticket['aid']]);
