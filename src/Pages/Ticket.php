@@ -300,7 +300,7 @@ FROM roles
 INNER JOIN `users` ON `users`.aid=roles.`user`
 LEFT JOIN assignees ON assignees.`user`=`users`.aid AND assignees.ticket=:ticket
 WHERE roles.project=:project AND roles.role="contributor"');
-        $stmt4->execute([':ticket' => $ticket['project'], ':ticket' => $ticket['aid']]);
+        $stmt4->execute([':project' => $ticket['project'], ':ticket' => $ticket['aid']]);
         return $this->twig->render(
             'ticket',
             [
