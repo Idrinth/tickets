@@ -20,14 +20,23 @@
             const diff = Date.now() - started;
             const hour = Math.floor(diff/1000/60/60);
             const min = Math.floor(diff/1000/60)%60;
-            if (min < 10 && hour < 10) {
-                duration.value = `0${hour}:0${min}`;
+            const sec = Math.floor(diff/1000)%60;
+            if (min < 10 && sec < 10 && hour < 10) {
+                duration.value = `0${hour}:0${min}:0${sec}`;
+            } else if (min < 10 && sec < 10) {
+                duration.value = `${hour}:0${min}:0${sec}`;
+            } else if (min < 10 && hour < 10) {
+                duration.value = `0${hour}:0${min}:${sec}`;
+            } else if (sec < 10 && hour < 10) {
+                duration.value = `0${hour}:${min}:0${sec}`;
+            } else if (sec < 10) {
+                duration.value = `${hour}:${min}:0${sec}`;
             } else if (min < 10) {
-                duration.value = `${hour}:0${min}`;
+                duration.value = `${hour}:0${min}:${sec}`;
             } else if (hour < 10) {
-                duration.value = `0${hour}:${min}`;
+                duration.value = `0${hour}:${min}:${sec}`;
             } else {
-                duration.value = `${hour}:${min}`;
+                duration.value = `${hour}:${min}:${sec}`;
             }
         }, 100);
     }

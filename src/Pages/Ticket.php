@@ -145,7 +145,7 @@ class Ticket
                     ->prepare('INSERT IGNORE INTO watchers (ticket, `user`) VALUES (:id, :user)')
                     ->execute([':id' => $ticket['aid'], ':user' => $_SESSION['id']]);
             } elseif($isContributor && isset($post['duration']) && isset($post['task'])) {
-                $time = (intval(explode(':', $post['duration'])[0], 10) * 60 + intval(explode(':', $post['duration'])[1], 10)) * 60;
+                $time = (intval(explode(':', $post['duration'])[0], 10) * 60 + intval(explode(':', $post['duration'])[1], 10)) * 60 + intval(explode(':', $post['duration'])[2], 10);
                 $this->database
                     ->prepare('INSERT INTO times (`user`,`ticket`,`day`,`duration`,`status`) VALUES (:user,:ticket,:day,:duration,:status) ON DUPLICATE KEY UPDATE `duration`=`duration`+:duration')
                     ->execute([':user' => $_SESSION['id'],':ticket' => $ticket['aid'],':day' => date('Y-m-d'),':duration' => $time,':status' => $post['task']]);
