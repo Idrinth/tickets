@@ -21,13 +21,13 @@
             const hour = Math.floor(diff/1000/60/60);
             const min = Math.floor(diff/1000/60)%60;
             if (min < 10 && hour < 10) {
-                duration.value = `0${hour}:0${min}:${sec}`;
+                duration.value = `0${hour}:0${min}`;
             } else if (min < 10) {
-                duration.value = `${hour}:0${min}:${sec}`;
+                duration.value = `${hour}:0${min}`;
             } else if (hour < 10) {
-                duration.value = `0${hour}:${min}:${sec}`;
+                duration.value = `0${hour}:${min}`;
             } else {
-                duration.value = `${hour}:${min}:${sec}`;
+                duration.value = `${hour}:${min}`;
             }
         }, 100);
     }
