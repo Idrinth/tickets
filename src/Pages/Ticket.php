@@ -236,7 +236,7 @@ class Ticket
                     ->execute([':ticket' => $ticket['aid']]);
                 foreach ($post['assignees'] as $assignee) {
                     $this->database
-                        ->prepare('INSERT INTO assignees (`ticket`,`user`) VALUES (:ticker,:user)')
+                        ->prepare('INSERT INTO assignees (`ticket`,`user`) VALUES (:ticket,:user)')
                         ->execute([':ticket' => $ticket['aid'], ':user' => $assignee]);
                     $this->database
                         ->prepare('INSERT IGNORE INTO watchers (ticket, `user`) VALUES (:id, :user)')
