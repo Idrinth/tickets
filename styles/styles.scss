@@ -93,13 +93,13 @@ h1,h2,h3,h4,h5,p {
 }
 .detail {
     &.bug {
-        background: #fdd;
+        background: #edd;
     }
     &.service {
-        background: #ddf;
+        background: #dde;
     }
     &.feature {
-        background: #dfd;
+        background: #ded;
     }
     > .description {
         border: 1px solid #ccc;
