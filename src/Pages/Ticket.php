@@ -230,7 +230,7 @@ class Ticket
                 $this->database
                     ->prepare('UPDATE tickets SET `project`=:project WHERE aid=:aid')
                     ->execute([':project' => $project['aid'],':aid' => $ticket['aid']]);
-                foreach ($this->watcher->ticket($ticket['aiud'], $_SESSION['id']) as $watcher) {
+                foreach ($this->watcher->ticket($ticket['aid'], $_SESSION['id']) as $watcher) {
                     if ($this->watcher->mailable($watcher)) {
                         $this->mailer->send(
                             $watcher['aid'],
