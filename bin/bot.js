@@ -11,22 +11,46 @@ const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
     await rest.put(Routes.applicationCommands(process.env.DISCORD_CLIENT_ID), { body: [
     {
       name: 'ticket',
+      application_id: process.env.DISCORD_CLIENT_ID,
       description: `Creates a new ticket at ${process.env.SYSTEM_HOSTNAME}.`,
       options: [
           {
-              name: 'Subject',
+              name: 'subject',
               description: 'A short summary of the issue',
               type: 3,
+              required: true,
           },
           {
-              name: 'Description',
+              name: 'description',
               description: 'A detailed description of the issue',
               type: 3,
+              required: true,
           },
           {
-              name: 'Unlisted',
+              name: 'type',
+              description: 'The type of issue',
+              type: 3,
+              required: true,
+              choices: [
+                  {
+                      name: 'Service Request',
+                      value: 'service',
+                  },
+                  {
+                      name: 'Bug',
+                      value: 'bug',
+                  },
+                  {
+                      name: 'Feature',
+                      value: 'feature',
+                  },
+              ],
+          },
+          {
+              name: 'unlisted',
               description: 'Should the issue be hidden?',
               type: 5,
+              required: false,
           }
       ]
     },
