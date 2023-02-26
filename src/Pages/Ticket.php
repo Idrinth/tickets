@@ -96,6 +96,8 @@ class Ticket
                             ':hash' => md5($data),
                             ':mime' => MimeTypeDetector::detect($data),
                         ]);
+                    var_dump($this->database->errorInfo());
+                    die();
                 }
                 $wasModified = true;
             } elseif (isset($post['content'])) {
