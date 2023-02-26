@@ -86,7 +86,6 @@ class Ticket
             if (isset($_FILES['file']) && isset($_FILES['file']['tmp_name']) && $_FILES['file']['tmp_name'] && !$isDone) {
                 if ($this->av->fclean($_FILES['file']['tmp_name'])) {
                     $data = file_get_contents($_FILES['file']['tmp_name']);
-                    $this->database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
                     $stmt = $this->database
                         ->prepare('INSERT INTO uploads (`ticket`,`user`,`uploaded`,`data`,`name`,`hash`,`mime`) VALUES (:ticket,:user,NOW(),:data,:name,:hash,:mime)')
                         ->execute([
@@ -97,8 +96,6 @@ class Ticket
                             ':hash' => md5($data),
                             ':mime' => MimeTypeDetector::detect($data),
                         ]);
-                    var_dump($this->database->errorInfo());
-                    die();
                 }
                 $wasModified = true;
             } elseif (isset($post['content'])) {
