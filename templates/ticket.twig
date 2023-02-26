@@ -1,7 +1,7 @@
 {% include 'header.twig' %}
 <div class="detail {{ ticket.type }}">
     <h2>{{ ticket.title }}</h2>
-    <p>Created: {{ ticket.created }} by {{ users[ticket.creator] }}</p>
+    <p>Created: {{ ticket.created }} as {{ ticket.type }} by {{ users[ticket.creator] }}</p>
     <p>Modified: {{ ticket.modified }}</p>
     <form method="post">
         <label for="assignees">Assigned to</label>
