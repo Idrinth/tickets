@@ -7,13 +7,12 @@
         }
         for (const notification of notifications) {
             const element = document.createElement('li');
-            element.appendChild(document.createElement('strong'));
-            element.lastChild.appendChild(document.createTextNode(notification.created));
-            element.appendChild(document.createElement('span'));
-            element.lastChild.appendChild(document.createTextNode(notification.content));
             element.appendChild(document.createElement('a'));
             element.lastChild.setAttribute('href', notification.url);
-            element.lastChild.appendChild(document.createTextNode('->'));
+            element.lastChild.appendChild(document.createElement('strong'));
+            element.lastChild.lastChild.appendChild(document.createTextNode(notification.created));
+            element.lastChild.appendChild(document.createElement('span'));
+            element.lastChild.lastChild.appendChild(document.createTextNode(notification.content));
             wrapper.appendChild(element);
         }
     };

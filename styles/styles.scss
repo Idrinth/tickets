@@ -127,3 +127,11 @@ form {
     box-sizing: border-box;
     box-shadow: 3px 3px 3px #ccc;
 }
+#notifications li {
+    display: block;
+    background-color: rgba(255,255,255,0.3);
+    border-radius: 2em;
+    a {
+        color: #fff;
+    }
+}
