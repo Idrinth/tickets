@@ -79,6 +79,7 @@ client.on('interactionCreate', async interaction => {
             key: process.env.BOT_API_KEY,
             user: interaction.user.tag,
             title: interaction.options.getString('subject'),
+            type: interaction.options.getString('type'),
             description: interaction.options.getString('description'),
             private: interaction.options.getBoolean('private') ? 1 : 0
         });

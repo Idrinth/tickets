@@ -18,7 +18,7 @@ class NewTicket
             header('Content-Type: application/json', true, 403);
             return '{"success":false}';
         }
-        if (!isset($post['user']) || !isset($post['description']) || !isset($post['title']) || !isset($post['private'])) {
+        if (!isset($post['user']) || !isset($post['description']) || !isset($post['title']) || !isset($post['private']) || !isset($post['type'])) {
             header('Content-Type: application/json', true, 400);
             return '{"success":false}';
         }
