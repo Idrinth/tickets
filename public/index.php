@@ -16,6 +16,8 @@ use De\Idrinth\Tickets\Pages\Profile;
 use De\Idrinth\Tickets\Pages\Project;
 use De\Idrinth\Tickets\Pages\Ticket;
 use De\Idrinth\Tickets\Pages\Times;
+use De\Idrinth\Tickets\Resources\Styles;
+use ScssPhp\ScssPhp\Compiler;
 use Twig\Loader\FilesystemLoader;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
@@ -24,7 +26,9 @@ require dirname(__DIR__) . '/vendor/autoload.php';
     ->register(new PDO('mysql:host=' . $_ENV['DATABASE_HOST'] . ';dbname=' . $_ENV['DATABASE_DATABASE'], $_ENV['DATABASE_USER'], $_ENV['DATABASE_PASSWORD']))
     ->register(new FilesystemLoader(dirname(__DIR__) . '/templates'))
     ->register(new Pipe($_ENV['CLAM_AV_SOCKET']))
+    ->register(new Compiler(['cacheDir' => dirname(__DIR__).'/cache']))
     ->get('/', Home::class)
+    ->get('/styles.css', Styles::class)
     ->get('/api/notifications', Notification::class)
     ->get('/api/attachments/{ticket:[a-z0-9]+}/{id:[0-9]+}', Attachment::class)
     ->get('/my-tickets', MyTickets::class)
