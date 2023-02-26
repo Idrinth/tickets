@@ -1,6 +1,7 @@
 require('dotenv').config();
 const { REST, Routes } = require('discord.js');
 const { Client, GatewayIntentBits } = require('discord.js');
+const needle = require('needle');
 
 const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
 
@@ -73,7 +74,23 @@ client.on('interactionCreate', async interaction => {
   }
 
   if (interaction.commandName === 'ticket') {
-    await interaction.reply('Pong!');
+    if (interaction.user && interaction.user.tag) {
+        const reply = await needle('post', `https://${process.env.SYSTEM_HOSTNAME}/api/new`, {
+            key: process.env.BOT_API_KEY,
+            user: interaction.user.tag,
+            title: interaction.options.getString('subject'),
+            description: interaction.options.getString('description'),
+            private: interaction.options.getBoolean('private') ? 1 : 0
+        });
+        const data = typeof reply.body === 'string' ? JSON.parse(reply.body) : reply.body;
+        if (data.success) {
+            await interaction.reply({content: `Created ticket at ${data.link}.`, ephemeral: interaction.options.getBoolean('private')});
+            return;
+        }
+        await interaction.reply({content: "Failed to create ticket.", ephemeral: true});
+        return;
+    }
+    await interaction.reply({content: "No user found, what happened?", ephemeral: true});
   }
 });
 client.login(process.env.DISCORD_TOKEN);

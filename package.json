@@ -2,6 +2,7 @@
     "name": "@idrinth/tickets",
     "dependencies": {
         "discord.js": "^14.7.1",
-        "dotenv": "^16.0.3"
+        "dotenv": "^16.0.3",
+        "needle": "^3.2.0"
     }
 }
