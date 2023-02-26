@@ -31,10 +31,12 @@
     {% else %}
         <p>Unlisted: {% if ticket.private=='1' %}Yes{% else %}No{% endif %}</p>
     {% endif %}
-    <p>Watchers: <ul>{% for user in watchers %}<li>{{ users[user.user] }}</li>{% endfor %}</ul>
-    {% if user is not empty and user.aid > 0 and not isDone %}<form method="post"><input type="hidden" name="watch" value="1"/><button type="submit">watch</button></form>{% endif %}
-    <p>Upvotes: {{ upvotes }}</p>
-    {% if user is not empty and user.aid > 0 and not isDone %}<form method="post"><input type="hidden" name="vote" value="1"/><button type="submit">{% if isUpvoter %}Downvote{% else %}Upvote{% endif %}</button></form>{% endif %}
+    <p>Watchers: <form method="post"><ul>{% for user in watchers %}<li>{{ users[user.user] }}</li>{% endfor %}</ul>
+    {% if user is not empty and user.aid > 0 and not isDone %}<input type="hidden" name="watch" value="1"/><button type="submit">watch</button>{% endif %}</form>
+    <form method="post">
+        <p>Upvotes: {{ upvotes }}</p>
+    {% if user is not empty and user.aid > 0 and not isDone %}<input type="hidden" name="vote" value="1"/><button type="submit">{% if isUpvoter %}Downvote{% else %}Upvote{% endif %}</button>{% endif %}
+    </form>
     {% if isContributor %}
         <form method="post" onchange="this.submit();">
             <label for="status">Status</label>
