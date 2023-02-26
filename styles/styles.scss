@@ -135,7 +135,14 @@ form {
         color: #fff;
     }
 }
-.attachment img {
-  max-height: 100px;
-  max-width: 100px;
+#attachments {
+    display: flex;
+    .attachment {
+        display: block;
+        padding: 0.25em;
+        img {
+            max-height: 100px;
+            max-width: 100px;
+        }
+    }
 }
