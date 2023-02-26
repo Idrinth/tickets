@@ -25,11 +25,22 @@ INNER JOIN `tickets` ON `tickets`.`aid`=`times`.`ticket`
 INNER JOIN `projects` ON `projects`.`aid`=`tickets`.`project`
 GROUP BY `projects`.`aid`,`users`.`aid`,`stati`.`aid`,`times`.`day`');
         $stmt->execute();
+        $times = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $timePerProject = [];
+        $timePerUser = [];
+        foreach ($times as $time) {
+            $timePerProject[$time['project']] = $timePerProject[$time['project']] ?? 0;
+            $timePerProject[$time['project']] += $time['duration'];
+            $timePerUser[$time['user']] = $timePerProject[$time['user']] ?? 0;
+            $timePerUser[$time['user']] += $time['duration'];
+        }
         return $this->twig->render(
             'times',
             [
                 'title' => 'Time Tracking',
-                'times' => $stmt->fetchAll(PDO::FETCH_ASSOC),
+                'times' => $times,
+                'timePerProject' => $timePerProject,
+                'timePerUser' => $timePerUser,
             ]
         );
     }

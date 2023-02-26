@@ -23,20 +23,31 @@
     </tbody>
 </table>
 <div>
-  <canvas id="distribution"></canvas>
+  <canvas id="distribution-project"></canvas>
+</div>
+<div>
+  <canvas id="distribution-user"></canvas>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js"></script>
 <script>
 (() => {
-  const ctx = document.getElementById('distribution');
-
-  new Chart(ctx, {
+  new Chart(document.getElementById('distribution-project'), {
     type: 'pie',
     data: {
-      labels: [{% for ts in times %}"{{ ts.project }}",{% endfor %}],
+      labels: [{% for project,ts in timePerProject %}"{{ project }}",{% endfor %}],
       datasets: [{
-        label: 'Hours of Work',
-        data: [{% for ts in times %}"{{ ts.duration }}",{% endfor %}],
+        label: 'Seconds of Work',
+        data: [{% for ts in timePerProject %}"{{ ts }}",{% endfor %}],
+      }]
+    }
+  });
+  new Chart(document.getElementById('distribution-user'), {
+    type: 'pie',
+    data: {
+      labels: [{% for user,ts in timePerUser %}"{{ user }}",{% endfor %}],
+      datasets: [{
+        label: 'Seconds of Work',
+        data: [{% for ts in timePerUser %}"{{ ts }}",{% endfor %}],
       }]
     }
   });
