@@ -60,6 +60,7 @@ h1,h2,h3,h4,h5 {
     padding: 0.1em;
     border-radius: 0.2em;
     margin: 0.3em;
+    box-shadow: 2px 2px 3px #ccc;
     &.bug {
         background: #fdd;
     }
@@ -90,10 +91,21 @@ h1,h2,h3,h4,h5,p {
     box-shadow: 2px 2px 3px #000;
     display: block;
 }
-.detail > .description {
-    border: 1px solid #ccc;
-    border-radius: 0.2em;
-    padding: 0.3em;
+.detail {
+    &.bug {
+        background: #fdd;
+    }
+    &.service {
+        background: #ddf;
+    }
+    &.feature {
+        background: #dfd;
+    }
+    > .description {
+        border: 1px solid #ccc;
+        border-radius: 0.2em;
+        padding: 0.3em;
+    }
 }
 table {
     border-collapse: collapse;
