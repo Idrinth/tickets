@@ -15,6 +15,7 @@
     {% if isContributor and not isDone %}
         <form method="post" onchange="this.submit();">
             <label for="unlisted">Unlisted?</label>
+            <input type="hidden" value="0" name="unlisted"/>
             <input type="checkbox" value="1"{% if ticket.private=='1' %} checked{% endif %} name="unlisted" id="unlisted"/>
         </form>
     {% else %}
@@ -90,7 +91,7 @@
     {% endautoescape %}</div>
     <ul>
     {% for time in times %}
-        <li>On {{ time.day}} {{ users[time.user] }}: {{ time.name }} for {{ time.duration | date('H:i') }}</li>
+        <li>On {{ time.day}} {{ users[time.user] }}: {{ time.name }} for {{ time.duration | date('H:i:s') }}</li>
     {% endfor %}
     {% if isContributor and not isDone %}
     <li>
