@@ -70,10 +70,6 @@ h1,h2,h3,h4,h5 {
 .board {
   display: flex;
 }
-form {
-  display: grid;
-  grid-template-columns: 50% 50%;
-}
 #header strong {
     padding: 1em;
 }
@@ -111,4 +107,14 @@ th,td,tr {
 th,td {
   padding: 0.25em;
   text-align: center;
+}
+form {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  padding: 2em;
+  border: 1px solid #ccc;
+  margin: 0 5%;
+  width: 90%;
+  box-sizing: border-box;
+  box-shadow: 3px 3px 3px #ccc;
 }
