@@ -3,6 +3,7 @@
 namespace De\Idrinth\Tickets\Services;
 
 use BrandEmbassy\FileTypeDetector\Detector;
+use BrandEmbassy\FileTypeDetector\FileInfo;
 
 class MimeTypeDetector
 {
@@ -15,10 +16,10 @@ class MimeTypeDetector
         }
         $out = Detector::detectByContent($tmp);        
         unlink($tmp);
-        if (!is_array($out)) {
+        if (!($out instanceof FileInfo)) {
             error_log('Couldn\'t detect mime type.');
             return 'application/octet-stream';
         }
-        return $out[2] ?? 'application/octet-stream';
+        return $out->getMimeType();
     }
 }
