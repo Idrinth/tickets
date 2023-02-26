@@ -14,7 +14,7 @@
     </form>
     {% if isContributor and not isDone %}
         <form method="post" onchange="this.submit();">
-            <label for="type">Unlisted?</label>
+            <label for="type">Type</label>
             <select name="type" id="type">
                 <option value="bug"{% if ticket.type=='bug' %} selected{% endif %}>Bug</option>
                 <option value="service"{% if ticket.type=='service' %} selected{% endif %}>Service Request</option>
