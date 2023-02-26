@@ -28,11 +28,14 @@ GROUP BY `projects`.`aid`,`users`.`aid`,`stati`.`aid`,`times`.`day`');
         $times = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $timePerProject = [];
         $timePerUser = [];
+        $timePerType = [];
         foreach ($times as $time) {
             $timePerProject[$time['project']] = $timePerProject[$time['project']] ?? 0;
             $timePerProject[$time['project']] += $time['duration'];
-            $timePerUser[$time['user']] = $timePerProject[$time['user']] ?? 0;
+            $timePerUser[$time['user']] = $timePerUser[$time['user']] ?? 0;
             $timePerUser[$time['user']] += $time['duration'];
+            $timePerType[$time['status']] = $timePerType[$time['user']] ?? 0;
+            $timePerType[$time['status']] += $time['duration'];
         }
         return $this->twig->render(
             'times',
@@ -41,6 +44,7 @@ GROUP BY `projects`.`aid`,`users`.`aid`,`stati`.`aid`,`times`.`day`');
                 'times' => $times,
                 'timePerProject' => $timePerProject,
                 'timePerUser' => $timePerUser,
+                'timePerType' => $timePerType,
             ]
         );
     }

@@ -29,6 +29,9 @@
     <div>
       <canvas id="distribution-user"></canvas>
     </div>
+    <div>
+      <canvas id="distribution-type"></canvas>
+    </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js"></script>
 <script>
@@ -50,6 +53,16 @@
       datasets: [{
         label: 'Seconds of Work',
         data: [{% for ts in timePerUser %}"{{ ts }}",{% endfor %}],
+      }]
+    }
+  });
+  new Chart(document.getElementById('distribution-type'), {
+    type: 'pie',
+    data: {
+      labels: [{% for type,ts in timePerType %}"{{ type }}",{% endfor %}],
+      datasets: [{
+        label: 'Seconds of Work',
+        data: [{% for ts in timePerType %}"{{ ts }}",{% endfor %}],
       }]
     }
   });
