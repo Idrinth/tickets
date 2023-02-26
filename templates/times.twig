@@ -22,4 +22,24 @@
         {% endfor %}
     </tbody>
 </table>
+<div>
+  <canvas id="distribution"></canvas>
+</div>
+<script src="/chart.js"></script>
+<script>
+(() => {
+  const ctx = document.getElementById('distribution');
+
+  new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: [{% for ts in times %}"{{ ts.project }}",{% endfor %}],
+      datasets: [{
+        label: 'Hours of Work',
+        data: [{% for ts in times %}"{{ ts.duration }}",{% endfor %}],
+      }]
+    }
+  });
+})();
+</script>
 {% include 'footer.twig' %}
