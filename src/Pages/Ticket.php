@@ -345,7 +345,7 @@ INNER JOIN assignees ON assignees.`user`=`users`.aid AND assignees.ticket=:ticke
         $stmt->execute([':ticket' => $ticket['aid']]);
         $stmt2 = $this->database->prepare('SELECT `user` FROM watchers WHERE ticket=:ticket');
         $stmt2->execute([':ticket' => $ticket['aid']]);
-        $stmt3 = $this->database->prepare('SELECT *` FROM uploads WHERE ticket=:ticket');
+        $stmt3 = $this->database->prepare('SELECT * FROM uploads WHERE ticket=:ticket');
         $stmt3->execute([':ticket' => $ticket['aid']]);
         $stmt4 = $this->database->prepare('SELECT `users`.`aid`,`users`.`display`,IF(assignees.ticket, 1, 0) AS assigned
 FROM roles
