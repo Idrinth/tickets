@@ -156,8 +156,8 @@
 {% if user is not empty and user.aid > 0 %}
     <li class="comment">
         <form method="post">
-            <label for="content">Your comment(<a href="https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github" target="_blanK">Markdown</a>)</label>
-            <textarea name="content" id="content"></textarea>
+            <label for="comment">Your comment(<a href="https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github" target="_blanK">Markdown</a>)</label>
+            <textarea name="content" id="comment"></textarea>
             <button type="submit">Comment</button>
             <div id="preview"></div>
         </form>
@@ -166,8 +166,9 @@
             (() => {
                 const converter = new showdown.Converter();
                 converter.setFlavor('github');
-                document.getElementById('content').onkeyup = () => {
-                    document.getElementById('preview').innerHTML = converter.makeHtml(document.getElementById('content').value);
+                const element = document.getElementById('comment');
+                element.onkeyup = () => {
+                    document.getElementById('preview').innerHTML = converter.makeHtml(element.value);
                 };
             })();
         </script>
