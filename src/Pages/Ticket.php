@@ -96,7 +96,14 @@ class Ticket
                             ':hash' => md5($data),
                             ':mime' => MimeTypeDetector::detect($data),
                         ]));
-                    
+                    var_dump([
+                            ':ticket' => $ticket['aid'],
+                            ':user' => $_SESSION['id'],
+                            ':data' => $data,
+                            ':name' => basename($_FILES['file']['name']),
+                            ':hash' => md5($data),
+                            ':mime' => MimeTypeDetector::detect($data),
+                        ]);
                     die();
                 }
                 $wasModified = true;
