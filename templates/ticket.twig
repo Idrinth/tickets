@@ -166,10 +166,8 @@
             (() => {
                 const converter = new showdown.Converter();
                 converter.setFlavor('github');
-                const element = document.getElementById('content');
-                element.onkeyup = () => {
-                    console.log(element.value);
-                    document.getElementById('preview').innerHTML = converter.makeHtml(element.value);
+                document.getElementById('content').onkeyup = () => {
+                    document.getElementById('preview').innerHTML = converter.makeHtml(document.getElementById('content').value);
                 };
             })();
         </script>
