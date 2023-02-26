@@ -115,7 +115,7 @@
 <ul id="attachments">
 {% for attachment in attachments %}
     <li class="attachment">
-        {% if attachment.mine == 'image/jpeg' or attachment.mime == 'image/gif' or attachment.mime == 'image/png' %}
+        {% if attachment.mime == 'image/jpeg' or attachment.mime == 'image/gif' or attachment.mime == 'image/png' %}
             <a href="/api/attachments/{{ ticket.slug }}/{{ attachment.aid }}"><img alt="{{ attachment.name }}"title="{{ attachment.name }} from {{ attachment.uploaded }}" src="/api/attachments/{{ ticket.slug }}/{{ attachment.aid }}"/></a>
         {% else %}
             <strong title="{{ attachment.uploaded }}"><a href="/api/attachments/{{ ticket.slug }}/{{ attachment.aid }}">{{ attachment.name }}</a></strong>
