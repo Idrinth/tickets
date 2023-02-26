@@ -30,7 +30,7 @@ require dirname(__DIR__) . '/vendor/autoload.php';
     ->register(new Compiler(['cacheDir' => dirname(__DIR__).'/cache']))
     ->get('/', Home::class)
     ->get('/styles.css', Styles::class)
-    ->get('/api/new', NewTicket2::class)
+    ->post('/api/new', NewTicket2::class)
     ->get('/api/notifications', Notification::class)
     ->get('/api/attachments/{ticket:[a-z0-9]+}/{id:[0-9]+}', Attachment::class)
     ->get('/my-tickets', MyTickets::class)
