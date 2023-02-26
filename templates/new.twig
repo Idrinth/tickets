@@ -10,6 +10,8 @@
         <input type="checkbox" value="1" id="unlisted" name="unlisted"/>
         <label for="description">Description(<a href="https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github" target="_blanK">Markdown</a>)</label>
         <textarea id="description" name="description" required></textarea>
+        <span></span>
+        <div id="preview"></div>
         <label for="type">Type</label>
         <select id="type" name="type">
             <option value="bug">Bug(an error)</option>
@@ -43,6 +45,13 @@
         </select>
         <button type="submit">Create</button>
     </form>
+    <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
+    <script>
+        document.getElementById('description').onkeyup = () => {
+            const converter = new showdown.Converter(),
+            document.getElementById('preview').innerHTML = converter.makeHtml(dosument.getElementById('description').value);
+        }
+    </script>
 {% else %}
     <p>Please login or send an eMail with your Ticket to <a href="mailto:{{ targetmail }}">{{ targetmail }}</a></p>
 {% endif %}
