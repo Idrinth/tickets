@@ -47,10 +47,13 @@
     </form>
     <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
     <script>
-        document.getElementById('description').onkeyup = () => {
-            const converter = new showdown.Converter(),
-            document.getElementById('preview').innerHTML = converter.makeHtml(dosument.getElementById('description').value);
-        }
+        (() => {
+            const converter = new showdown.Converter();
+            const element = document.getElementById('description');
+            element.onkeyup = () => {
+                document.getElementById('preview').innerHTML = converter.makeHtml(element.value);
+            };
+        })();
     </script>
 {% else %}
     <p>Please login or send an eMail with your Ticket to <a href="mailto:{{ targetmail }}">{{ targetmail }}</a></p>

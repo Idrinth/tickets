@@ -163,10 +163,13 @@
         </form>
         <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
         <script>
-            document.getElementById('content').onkeyup = () => {
-                const converter = new showdown.Converter(),
-                document.getElementById('preview').innerHTML = converter.makeHtml(dosument.getElementById('content').value);
-            }
+            (() => {
+                const converter = new showdown.Converter();
+                const element = document.getElementById('content');
+                element.onkeyup = () => {
+                    document.getElementById('preview').innerHTML = converter.makeHtml(element.value);
+                };
+            })();
         </script>
     </li>
 {% endif %}
