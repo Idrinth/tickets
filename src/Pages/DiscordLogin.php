@@ -43,6 +43,13 @@ class DiscordLogin
         ]);
         $_SESSION['id'] = intval($stmt->fetchColumn(), 10);
         if ($_SESSION['id'] === 0) {
+            $stmt = $this->database->prepare('SELECT aid FROM users WHERE discord_name=:discord AND NOT discord');
+            $stmt->execute([
+                ':discord' => $user->getUsername() . '#' . $user->getDiscriminator(),
+            ]);
+            $_SESSION['id'] = intval($stmt->fetchColumn(), 10);
+        }
+        if ($_SESSION['id'] === 0) {
             $this->database
                 ->prepare("INSERT INTO users (discord, display,discord_name) VALUES (:discordId, :display,:display)")
                 ->execute([
