@@ -82,6 +82,7 @@ client.on('interactionCreate', async interaction => {
             description: interaction.options.getString('description'),
             private: interaction.options.getBoolean('private') ? 1 : 0
         });
+        console.log(reply.body);
         const data = typeof reply.body === 'string' ? JSON.parse(reply.body) : reply.body;
         if (data.success) {
             await interaction.reply({content: `Created ticket at ${data.link}.`, ephemeral: interaction.options.getBoolean('private')});
