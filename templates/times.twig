@@ -1,32 +1,34 @@
 {% include 'header.twig' %}
 <h1>Time Spent</h1>
-<table>
-    <thead>
-        <tr>
-            <th>Day</th>
-            <th>Task</th>
-            <th>Duration</th>
-            <th>User</th>
-            <th>Project</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for ts in times %}
+<div style="display: flex">
+    <table>
+        <thead>
             <tr>
-                <th>{{ ts.day }}</th>
-                <th>{{ ts.status }}</th>
-                <td>{{ ts.duration | date('H:i') }}</td>
-                <td>{{ ts.user }}</td>
-                <td>{{ ts.project }}</td>
+                <th>Day</th>
+                <th>Task</th>
+                <th>Duration</th>
+                <th>User</th>
+                <th>Project</th>
             </tr>
-        {% endfor %}
-    </tbody>
-</table>
-<div>
-  <canvas id="distribution-project"></canvas>
-</div>
-<div>
-  <canvas id="distribution-user"></canvas>
+        </thead>
+        <tbody>
+            {% for ts in times %}
+                <tr>
+                    <th>{{ ts.day }}</th>
+                    <th>{{ ts.status }}</th>
+                    <td>{{ ts.duration | date('H:i') }}</td>
+                    <td>{{ ts.user }}</td>
+                    <td>{{ ts.project }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div>
+      <canvas id="distribution-project"></canvas>
+    </div>
+    <div>
+      <canvas id="distribution-user"></canvas>
+    </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js"></script>
 <script>
