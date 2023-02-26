@@ -153,6 +153,11 @@ class Ticket
                 $this->database
                     ->prepare('INSERT IGNORE INTO watchers (ticket, `user`) VALUES (:id, :user)')
                     ->execute([':id' => $ticket['aid'], ':user' => $_SESSION['id']]);
+            } elseif (isset($post['type']) && $isContributor && !$isDone) {
+                $this->database
+                    ->prepare('UPDATE tickets set `type`=:type WHERE aid=:aid')
+                    ->execute([':aid' => $ticket['aid'], ':type' => $post['type']]);
+                $wasModified=true;
             } elseif($isContributor && isset($post['duration']) && isset($post['task'])) {
                 $time = (intval(explode(':', $post['duration'])[0], 10) * 60 + intval(explode(':', $post['duration'])[1], 10)) * 60 + intval(explode(':', $post['duration'])[2], 10);
                 $this->database
