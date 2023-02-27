@@ -24,7 +24,7 @@ class Comment
             header('Content-Type: application/json', true, 403);
             return '{"success":false}';
         }
-        if (!isset($post['user']) || !isset($post['content']) || !isset($post['ticket'])) {
+        if (!isset($post['user']) || !isset($post['comment']) || !isset($post['ticket'])) {
             header('Content-Type: application/json', true, 400);
             return '{"success":false}';
         }
