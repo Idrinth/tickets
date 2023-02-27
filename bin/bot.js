@@ -94,39 +94,51 @@ client.on('interactionCreate', async interaction => {
 
   if (interaction.commandName === 'ticket') {
     if (interaction.user && interaction.user.tag) {
-        const reply = await needle('post', `https://${process.env.SYSTEM_HOSTNAME}/api/new`, {
-            key: process.env.BOT_API_KEY,
-            user: interaction.user.tag,
-            title: interaction.options.getString('subject'),
-            type: interaction.options.getString('type'),
-            description: interaction.options.getString('description'),
-            private: interaction.options.getBoolean('private') ? 1 : 0
-        });
-        const data = typeof reply.body === 'string' ? JSON.parse(reply.body) : reply.body;
-        if (data.success) {
-            await interaction.reply({content: `Created ticket at ${data.link}.`, ephemeral: interaction.options.getBoolean('private')});
+        try {
+            const reply = await needle('post', `https://${process.env.SYSTEM_HOSTNAME}/api/new`, {
+                key: process.env.BOT_API_KEY,
+                user: interaction.user.tag,
+                title: interaction.options.getString('subject'),
+                type: interaction.options.getString('type'),
+                description: interaction.options.getString('description'),
+                private: interaction.options.getBoolean('private') ? 1 : 0
+            });
+            const data = typeof reply.body === 'string' ? JSON.parse(reply.body) : reply.body;
+            if (data.success) {
+                await interaction.reply({content: `Created ticket at ${data.link}.`, ephemeral: interaction.options.getBoolean('private')});
+                return;
+            }
+            await interaction.reply({content: "Failed to create ticket.", ephemeral: true});
+            return;
+        } catch (e) {
+            console.error(e);
+            await interaction.reply({content: "Server failed to answer.", ephemeral: true});
             return;
         }
-        await interaction.reply({content: "Failed to create ticket.", ephemeral: true});
-        return;
     }
     await interaction.reply({content: "No user found, what happened?", ephemeral: true});
   } else if (interaction.commandName === 'comment') {
     if (interaction.user && interaction.user.tag) {
-        const reply = await needle('post', `https://${process.env.SYSTEM_HOSTNAME}/api/comment`, {
-            key: process.env.BOT_API_KEY,
-            user: interaction.user.tag,
-            comment: interaction.options.getString('comment'),
-            ticket: interaction.options.getString('ticket'),
-        });
-        console.log(reply.body);
-        const data = typeof reply.body === 'string' ? JSON.parse(reply.body) : reply.body;
-        if (data.success) {
-            await interaction.reply({content: `Created a comment at ${data.link}.`, ephemeral: data.private});
+        try {
+            const reply = await needle('post', `https://${process.env.SYSTEM_HOSTNAME}/api/comment`, {
+                key: process.env.BOT_API_KEY,
+                user: interaction.user.tag,
+                comment: interaction.options.getString('comment'),
+                ticket: interaction.options.getString('ticket'),
+            });
+            console.log(reply.body);
+            const data = typeof reply.body === 'string' ? JSON.parse(reply.body) : reply.body;
+            if (data.success) {
+                await interaction.reply({content: `Created a comment at ${data.link}.`, ephemeral: data.private});
+                return;
+            }
+            await interaction.reply({content: "Failed to create a comment.", ephemeral: true});
+            return;
+        } catch (e) {
+            console.error(e);
+            await interaction.reply({content: "Server failed to answer.", ephemeral: true});
             return;
         }
-        await interaction.reply({content: "Failed to create a comment.", ephemeral: true});
-        return;
     }
     await interaction.reply({content: "No user found, what happened?", ephemeral: true});
   }
