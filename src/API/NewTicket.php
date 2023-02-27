@@ -51,7 +51,7 @@ class NewTicket
                         'hostname' => $_ENV['SYSTEM_HOSTNAME'],
                         'ticket' => $slug,
                         'project' => $post['project'],
-                        'author' => $name,
+                        'author' => $post['user'],
                         'title' => $post['title'],
                     ],
                     "Ticket $slug Created",
