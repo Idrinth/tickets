@@ -119,6 +119,7 @@ client.on('interactionCreate', async interaction => {
             comment: interaction.options.getString('comment'),
             ticket: interaction.options.getString('ticket'),
         });
+        console.log(reply.body);
         const data = typeof reply.body === 'string' ? JSON.parse(reply.body) : reply.body;
         if (data.success) {
             await interaction.reply({content: `Created a comment at ${data.link}.`, ephemeral: data.private});
