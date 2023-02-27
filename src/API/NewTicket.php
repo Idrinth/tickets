@@ -2,6 +2,7 @@
 
 namespace De\Idrinth\Tickets\API;
 
+use De\Idrinth\Tickets\Services\Mailer;
 use De\Idrinth\Tickets\Services\Watcher;
 use PDO;
 
@@ -9,10 +10,13 @@ class NewTicket
 {
     private PDO $database;
     private Watcher $watcher;
+    private Mailer $mailer;
 
-    public function __construct(PDO $database, Watcher $watcher)
+    public function __construct(PDO $database, Watcher $watcher, Mailer $mailer)
     {
         $this->database = $database;
+        $this->watcher = $watcher;
+        $this->mailer = $mailer;
     }
     public function run ($post)
     {
