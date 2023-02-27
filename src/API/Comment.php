@@ -2,13 +2,18 @@
 
 namespace De\Idrinth\Tickets\API;
 
+use De\Idrinth\Tickets\Services\Watcher;
+use PDO;
+
 class Comment
 {
     private PDO $database;
+    private Watcher $watcher;
     
-    public function __construct(PDO $database)
+    public function __construct(PDO $database, Watcher $watcher)
     {
         $this->database = $database;
+        $this->watcher = $watcher;
     }
     public function run ($post)
     {
@@ -39,11 +44,39 @@ class Comment
         }
         $this->database
             ->prepare('INSERT INTO comments (`ticket`,`creator`,`created`,`content`) VALUES (:ticket,:creator,NOW(),:content)')
-            ->execute([':ticket' => $ticket['aid'], ':creator' => $id, ':content' => $post['content']]);
+            ->execute([':ticket' => $ticket['aid'], ':creator' => $id, ':content' => $post['comment']]);
+        $comment = intval($this->database->lastInsertId(), 10);
+        $this->database
+            ->prepare('INSERT IGNORE INTO watchers (ticket, `user`) VALUES (:id, :user)')
+            ->execute([':id' => $ticket['aid'], ':user' => $_SESSION['id']]);
         $stmt = $this->database->prepare('SELECT slug,limited_access FROM projects WHERE aid=:id');
         $stmt->execute([':id' => $ticket['project']]);
         $project = $stmt->fetch(PDO::FETCH_ASSOC);
         $private = $project['limited_access'] === '1' || $ticket['private'] === '1';
-        return '{"success":true,"link":"https://' . $_ENV['SYSTEM_HOSTNAME'] . '/' . $project['slug'] . '/' . $post['ticket'] . '","private":'. ($private ? 'true' : 'false') .'}';
+        foreach ($this->watcher->ticket($ticket['aid'], $id) as $watcher) {
+            if ($this->watcher->mailable($watcher)) {
+                $this->mailer->send(
+                    $watcher['aid'],
+                    'new-comment',
+                    [
+                        'hostname' => $_ENV['SYSTEM_HOSTNAME'],
+                        'ticket' => $ticket['slug'],
+                        'project' => $project['slug'],
+                        'name' => $watcher['display'],
+                        'comment' => [
+                            'content' => $post['comment'],
+                            'author' => $post['user']
+                        ],
+                    ],
+                    "New comment on Ticket {$ticket['slug']}",
+                    $watcher['email'],
+                    $watcher['display']
+                );
+            }
+            $this->database
+                ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
+                ->execute([':url' => "/{$project['slug']}/{$ticket['slug']}#c{$comment}", ':user' => $watcher['user'],':ticket' => $ticket['aid'], ':content' => 'A new comment was written.']);
+        }
+        return '{"success":true,"link":"https://' . $_ENV['SYSTEM_HOSTNAME'] . '/' . $project['slug'] . '/' . $post['ticket'] . '#c' . $comment . '","private":'. ($private ? 'true' : 'false') .'}';
     }
 }
