@@ -54,7 +54,7 @@ class NewTicket
                     [
                         'hostname' => $_ENV['SYSTEM_HOSTNAME'],
                         'ticket' => $slug,
-                        'project' => $post['project'],
+                        'project' => 'unknown',
                         'author' => $post['user'],
                         'title' => $post['title'],
                     ],
