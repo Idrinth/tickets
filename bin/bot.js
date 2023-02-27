@@ -55,6 +55,25 @@ const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
           }
       ]
     },
+    {
+      name: 'comment',
+      application_id: process.env.DISCORD_CLIENT_ID,
+      description: `Creates a comment to an existing ticket at ${process.env.SYSTEM_HOSTNAME}.`,
+      options: [
+          {
+              name: 'ticket',
+              description: 'The ticket code, for example 2x.',
+              type: 3,
+              required: true,
+          },
+          {
+              name: 'comment',
+              description: 'Yourcomment the issue',
+              type: 3,
+              required: true,
+          },
+      ]
+    },
   ]});
 
     console.log('Successfully reloaded application (/) commands.');
@@ -83,13 +102,29 @@ client.on('interactionCreate', async interaction => {
             description: interaction.options.getString('description'),
             private: interaction.options.getBoolean('private') ? 1 : 0
         });
-        console.log(reply.body);
         const data = typeof reply.body === 'string' ? JSON.parse(reply.body) : reply.body;
         if (data.success) {
             await interaction.reply({content: `Created ticket at ${data.link}.`, ephemeral: interaction.options.getBoolean('private')});
             return;
         }
         await interaction.reply({content: "Failed to create ticket.", ephemeral: true});
+        return;
+    }
+    await interaction.reply({content: "No user found, what happened?", ephemeral: true});
+  } else if (interaction.commandName === 'comment') {
+    if (interaction.user && interaction.user.tag) {
+        const reply = await needle('post', `https://${process.env.SYSTEM_HOSTNAME}/api/comment`, {
+            key: process.env.BOT_API_KEY,
+            user: interaction.user.tag,
+            comment: interaction.options.getString('comment'),
+            ticket: interaction.options.getString('ticket'),
+        });
+        const data = typeof reply.body === 'string' ? JSON.parse(reply.body) : reply.body;
+        if (data.success) {
+            await interaction.reply({content: `Created a comment at ${data.link}.`, ephemeral: data.private});
+            return;
+        }
+        await interaction.reply({content: "Failed to create a comment.", ephemeral: true});
         return;
     }
     await interaction.reply({content: "No user found, what happened?", ephemeral: true});
