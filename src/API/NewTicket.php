@@ -33,8 +33,8 @@ class NewTicket
             $id = intval($this->database->lastInsertId(), 10);
         }
         $this->database
-            ->prepare('INSERT INTO tickets (title,description,creator,`type`,`status`,created,modified,project,private) VALUES (:title,:description,:creator,"service",1,NOW(),NOW(),0,:private)')
-            ->execute([':creator' => $id, ':title' => $post['title'], ':description' => $post['description'], ':private' => $post['private']]);
+            ->prepare('INSERT INTO tickets (title,description,creator,`type`,`status`,created,modified,project,private) VALUES (:title,:description,:creator,:type,1,NOW(),NOW(),0,:private)')
+            ->execute([':creator' => $id, ':title' => $post['title'], ':description' => $post['description'], ':private' => $post['private'], ':type' => $post['type']]);
         $ticket = $this->database->lastInsertId();
         $slug = base_convert("$ticket", 10, 36);
         $this->database
