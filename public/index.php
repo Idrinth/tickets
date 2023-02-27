@@ -2,6 +2,7 @@
 
 use Appwrite\ClamAV\Pipe;
 use De\Idrinth\Tickets\API\Attachment;
+use De\Idrinth\Tickets\API\Comment;
 use De\Idrinth\Tickets\API\NewTicket as NewTicket2;
 use De\Idrinth\Tickets\API\Notification;
 use De\Idrinth\Tickets\Application;
@@ -31,6 +32,7 @@ require dirname(__DIR__) . '/vendor/autoload.php';
     ->get('/', Home::class)
     ->get('/styles.css', Styles::class)
     ->post('/api/new', NewTicket2::class)
+    ->post('/api/comment', Comment::class)
     ->get('/api/notifications', Notification::class)
     ->get('/api/attachments/{ticket:[a-z0-9]+}/{id:[0-9]+}', Attachment::class)
     ->get('/my-tickets', MyTickets::class)
