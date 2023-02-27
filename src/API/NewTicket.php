@@ -2,13 +2,15 @@
 
 namespace De\Idrinth\Tickets\API;
 
+use De\Idrinth\Tickets\Services\Watcher;
 use PDO;
 
 class NewTicket
 {
     private PDO $database;
-    
-    public function __construct(PDO $database)
+    private Watcher $watcher;
+
+    public function __construct(PDO $database, Watcher $watcher)
     {
         $this->database = $database;
     }
@@ -40,6 +42,30 @@ class NewTicket
         $this->database
             ->prepare('UPDATE tickets SET slug=:slug WHERE aid=:id')
             ->execute([':slug' => $slug, ':id' => $ticket]);
+        foreach ($this->watcher->project(0, $id) as $watcher) {
+            if ($this->watcher->mailable($watcher)) {
+                $this->mailer->send(
+                    $watcher['aid'],
+                    'new-ticket',
+                    [
+                        'hostname' => $_ENV['SYSTEM_HOSTNAME'],
+                        'ticket' => $slug,
+                        'project' => $post['project'],
+                        'author' => $name,
+                        'title' => $post['title'],
+                    ],
+                    "Ticket $slug Created",
+                    $watcher['email'],
+                    $watcher['display']
+                );
+            }
+            $this->database
+                ->prepare('INSERT INTO notifications (`url`,`user`,`ticket`,`created`,`content`) VALUES (:url,:user,:ticket,NOW(),:content)')
+                ->execute([':url' => '/'.$post['project'].'/'.$slug, ':user' => $watcher['user'],':ticket' => $id, ':content' => 'A new ticket was written.']);
+        }
+        $this->database
+            ->prepare('INSERT IGNORE INTO watchers (ticket, `user`) VALUES (:id, :user)')
+            ->execute([':id' => $ticket, ':user' => $id]);
         return '{"success":true,"link":"https://' . $_ENV['SYSTEM_HOSTNAME'] . '/unknown/' . $slug . '"}';
     }
 }
