@@ -43,7 +43,7 @@ class DiscordLogin
         ]);
         $_SESSION['id'] = intval($stmt->fetchColumn(), 10);
         if ($_SESSION['id'] === 0) {
-            $stmt = $this->database->prepare('SELECT aid FROM users WHERE discord_name=:discord AND NOT discord');
+            $stmt = $this->database->prepare('SELECT aid FROM users WHERE discord_name=:discord AND ISNULL(discord)');
             $stmt->execute([
                 ':discord' => $user->getUsername() . '#' . $user->getDiscriminator(),
             ]);
