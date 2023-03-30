@@ -34,6 +34,9 @@ class MailToTicket
         $fromMail = $mail->fromAddress;
         $fromName = $mail->fromName ?? explode('@', $mail->fromAddress)[0];
         $subject = $mail->subject ?? '';
+        if ($subject === 'Undelivered Mail Returned to Sender') {
+            return;
+        }
         if ($mail->textHtml === null && $mail->textPlain === null) {
             $body = '';
         } elseif ($mail->textPlain) {
